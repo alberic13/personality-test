@@ -1,65 +1,230 @@
-import Image from "next/image";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { Question, Answer, QuizResult as QuizResultType } from "../types/quiz";
+import { questions } from "../data/questions";
+import { calculateQuizResult, getIntelligenceScoresList } from "../lib/quiz-engine";
+import { LeadModal } from "../components/quiz/LeadModal";
+import { QuizIntro } from "../components/quiz/QuizIntro";
+import { QuizCard } from "../components/quiz/QuizCard";
+import { QuizResult } from "../components/quiz/QuizResult";
+import { SchoolGate } from "../components/quiz/SchoolGate";
+import { Sparkles, Sun, Moon } from "lucide-react";
 
 export default function Home() {
+  const [viewState, setViewState] = useState<"welcome" | "intro" | "quiz" | "result">("intro");
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [answers, setAnswers] = useState<Answer[]>([]);
+  const [currentResult, setCurrentResult] = useState<QuizResultType | null>(null);
+  
+  // States untuk Pop-up Lead Form (Nama & Email)
+  const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
+  const [isSubmittingLead, setIsSubmittingLead] = useState(false);
+  const [pendingAnswers, setPendingAnswers] = useState<Answer[] | null>(null);
+
+  // States untuk Timer Mundur 15 Menit (900 detik)
+  const [timeLeft, setTimeLeft] = useState<number>(900);
+  const [isTimeOut, setIsTimeOut] = useState(false);
+
+  // Timer Countdown Effect
+  useEffect(() => {
+    if (viewState !== "quiz") return;
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          handleAutoSubmit();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [viewState]);
+
+  const handleAutoSubmit = () => {
+    setIsTimeOut(true);
+    setPendingAnswers(answers);
+    setIsLeadModalOpen(true);
+  };
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  };
+
+  const handleStartQuiz = () => {
+    setAnswers([]);
+    setCurrentIndex(0);
+    setTimeLeft(900); // Reset timer ke 15 menit (900 detik)
+    setIsTimeOut(false);
+    setViewState("quiz");
+  };
+
+  const handleAnswer = (questionId: number, score: number) => {
+    setAnswers((prev) => {
+      const filtered = prev.filter((a) => a.questionId !== questionId);
+      return [...filtered, { questionId, score }];
+    });
+  };
+
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentIndex < questions.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
+
+  const handleSubmitQuiz = () => {
+    if (answers.length < questions.length) return;
+    setPendingAnswers(answers);
+    setIsTimeOut(false);
+    setIsLeadModalOpen(true);
+  };
+
+  const handleSimulateQuiz = () => {
+    const mockAnswers = questions.map((q) => {
+      const randomScore = Math.floor(Math.random() * 5) + 1;
+      return { questionId: q.id, score: randomScore };
+    });
+    setPendingAnswers(mockAnswers);
+    setIsTimeOut(false);
+    setIsLeadModalOpen(true);
+  };
+
+  const handleLeadSubmit = async (name: string, email: string) => {
+    if (!pendingAnswers) return;
+
+    setIsSubmittingLead(true);
+    const result = calculateQuizResult(pendingAnswers);
+
+    // Hitung raw scores per kategori
+    const scoresList = getIntelligenceScoresList(result);
+    const scoresMap: Record<string, number> = {};
+    scoresList.forEach((s) => {
+      scoresMap[s.dimension] = s.score;
+    });
+
+    try {
+      // Kirim data ke Next.js API
+      await fetch("/api/submit-to-sheet", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          scores: scoresMap,
+          dominant: result.dominantTypes,
+          date: result.date,
+        }),
+      });
+    } catch (error) {
+      console.error("Gagal mengirim data lead ke Google Sheets:", error);
+    } finally {
+      // Tampilkan hasil kuis ke user untuk kelancaran UX
+      setCurrentResult(result);
+      setIsSubmittingLead(false);
+      setIsLeadModalOpen(false);
+      setPendingAnswers(null);
+      setViewState("result");
+    }
+  };
+
+
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900 transition-colors duration-300 relative overflow-x-hidden">
+      {/* Ambient Blue Glow & Blur Background */}
+      <div className="absolute top-[-10%] left-[-15%] w-[60vw] h-[60vw] bg-blue-300/25 rounded-full blur-[120px] pointer-events-none -z-10" />
+      <div className="absolute bottom-[-10%] right-[-15%] w-[60vw] h-[60vw] bg-sky-300/20 rounded-full blur-[140px] pointer-events-none -z-10" />
+      <div className="absolute top-[35%] left-[20%] w-[50vw] h-[50vw] bg-indigo-300/15 rounded-full blur-[130px] pointer-events-none -z-10" />
+
+      {/* Header / Navigation Bar */}
+      <header className="sticky top-0 z-40 bg-white/70 backdrop-blur-md border-b border-zinc-100 transition-colors duration-300">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          {/* Logo */}
+          <div
+            className="flex items-center gap-2 font-black text-lg sm:text-xl tracking-tight cursor-pointer select-none"
+            onClick={() => setViewState("intro")}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 font-black text-base italic tracking-tighter">
+              Z
+            </div>
+            <span className="bg-gradient-to-r from-zinc-950 via-zinc-900 to-zinc-700 bg-clip-text text-transparent">
+              Test Personal
+            </span>
+          </div>
         </div>
+      </header>
+
+      {/* Main Content Area */}
+      <main className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col">
+
+        {viewState === "intro" && (
+          <QuizIntro
+            onStart={handleStartQuiz}
+            onSimulate={handleSimulateQuiz}
+          />
+        )}
+
+        {viewState === "quiz" && (
+          <QuizCard
+            questions={questions}
+            currentIndex={currentIndex}
+            answers={answers}
+            onAnswer={handleAnswer}
+            onPrev={handlePrev}
+            onNext={handleNext}
+            onSubmit={handleSubmitQuiz}
+            formattedTime={formatTime(timeLeft)}
+          />
+        )}
+
+        {viewState === "result" && currentResult && (
+          <QuizResult
+            result={currentResult}
+            onRetake={handleStartQuiz}
+            onGoHome={() => setViewState("intro")}
+          />
+        )}
       </main>
+
+      <footer className="w-full py-6 text-center border-t border-slate-150 text-xs sm:text-sm text-slate-400 mt-6 bg-white/30 backdrop-blur-sm transition-colors duration-300">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p>© {new Date().getFullYear()} Test Personal | Zalde.</p>
+          <div className="flex items-center gap-4">
+            <a 
+              href="https://api.whatsapp.com/send?phone=6281381998561" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="hover:text-slate-600 transition-colors font-semibold"
+            >
+              Contact Us
+            </a>
+          </div>
+        </div>
+      </footer>
+      {/* LeadModal Popup Form */}
+      <LeadModal
+        isOpen={isLeadModalOpen}
+        onClose={() => {
+          setIsLeadModalOpen(false);
+          setPendingAnswers(null);
+        }}
+        onSubmit={handleLeadSubmit}
+        isSubmitting={isSubmittingLead}
+        isTimeOut={isTimeOut}
+      />
     </div>
   );
 }

@@ -63,6 +63,22 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
     }
   }, [selectedRoom]);
 
+  // Listen for Escape key to close the modal
+  useEffect(() => {
+    if (!selectedRoom) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSelectedRoom(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedRoom]);
+
   // List of classrooms
   const classrooms = [
     { dimension: "linguistik" as Dimension, code: "", name: "Kecerdasan Bahasa (Linguistik)", description: "Mengasah menulis, sastra, & tata bahasa.", icon: <MessageSquare className="w-5 h-5 text-purple-600" /> },
@@ -199,7 +215,15 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
 
       {/* CLASSROOM WHITEBOARD MODAL */}
       {selectedRoom && (
-        <div ref={overlayRef} className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div 
+          ref={overlayRef} 
+          onClick={(e) => {
+            if (e.target === overlayRef.current) {
+              setSelectedRoom(null);
+            }
+          }}
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        >
           <div ref={modalRef} className="bg-white border border-slate-250 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl flex flex-col gap-5 relative opacity-0 z-50">
             {/* Close button */}
             <button 

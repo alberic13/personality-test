@@ -1,15 +1,116 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../ui/Card";
 import { Button } from "../ui/Button";
-import { MessageSquare, Calculator, Compass, Activity, Music, Users, User, Leaf, ArrowRight, Timer, ClipboardList, ShieldCheck, BarChart3 } from "lucide-react";
+import { MessageSquare, Calculator, Compass, Activity, Music, Users, User, Leaf, ArrowRight, Timer, ClipboardList, ShieldCheck, BarChart3, ChevronLeft, ChevronRight } from "lucide-react";
 import { Dimension } from "../../types/quiz";
 import { intelligences } from "../../data/intelligences";
 import gsap from "gsap";
+import TextType from "../ui/TextType";
+import MagicBento, { BentoItem } from "../ui/MagicBento";
+
+const SQRT_3200 = Math.sqrt(3200);
+
+function cn(...classes: (string | boolean | undefined)[]) {
+  return classes.filter(Boolean).join(" ");
+}
 
 interface QuizIntroProps {
   onStart: () => void;
   onSimulate: () => void;
 }
+
+interface AspectCardProps {
+  position: number;
+  aspect: {
+    dimension: Dimension;
+    code: string;
+    name: string;
+    description: string;
+    icon: React.ReactNode;
+    bgIcon: string;
+    tempId: number;
+  };
+  handleMove: (steps: number) => void;
+  setSelectedRoom: (room: Dimension) => void;
+  cardSize: number;
+}
+
+const AspectCard: React.FC<AspectCardProps> = ({ 
+  position, 
+  aspect, 
+  handleMove, 
+  setSelectedRoom,
+  cardSize 
+}) => {
+  const isCenter = position === 0;
+
+  return (
+    <div
+      onClick={() => {
+        if (isCenter) {
+          setSelectedRoom(aspect.dimension);
+        } else {
+          handleMove(position);
+        }
+      }}
+      className={cn(
+        "absolute left-1/2 top-1/2 cursor-pointer border-2 p-6 sm:p-8 transition-all duration-500 ease-in-out flex flex-col justify-between rounded-xl",
+        isCenter 
+          ? "z-10 bg-slate-900 text-white border-slate-900 shadow-2xl scale-100" 
+          : "z-0 bg-white text-slate-800 border-slate-200 hover:border-indigo-400 hover:shadow-lg scale-90"
+      )}
+      style={{
+        width: cardSize,
+        height: cardSize,
+        clipPath: `polygon(40px 0%, calc(100% - 40px) 0%, 100% 40px, 100% 100%, calc(100% - 40px) 100%, 40px 100%, 0 100%, 0 0)`,
+        transform: `
+          translate(-50%, -50%) 
+          translateX(${(cardSize / 1.65) * position}px)
+          translateY(${isCenter ? -35 : position % 2 ? 15 : -15}px)
+          rotate(${isCenter ? 0 : position % 2 ? 2.5 : -2.5}deg)
+        `,
+        boxShadow: isCenter ? "0px 8px 0px 4px #e2e8f0" : "0px 0px 0px 0px transparent"
+      }}
+    >
+      <span
+        className={cn("absolute block origin-top-right rotate-45", isCenter ? "bg-slate-800" : "bg-slate-100")}
+        style={{
+          right: -2,
+          top: 38,
+          width: SQRT_3200,
+          height: 1
+        }}
+      />
+      
+      <div className="flex flex-col gap-4">
+        <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center shadow-inner shrink-0", aspect.bgIcon)}>
+          {aspect.icon}
+        </div>
+        <div className="flex flex-col gap-1">
+          <h3 className={cn(
+            "text-base sm:text-lg font-black leading-tight",
+            isCenter ? "text-white" : "text-slate-900"
+          )}>
+            {aspect.name}
+          </h3>
+          <p className={cn(
+            "text-xs sm:text-sm leading-relaxed mt-1",
+            isCenter ? "text-slate-300" : "text-slate-500"
+          )}>
+            {aspect.description}
+          </p>
+        </div>
+      </div>
+
+      <div className={cn(
+        "text-xs font-bold flex items-center gap-1 mt-auto pt-3 border-t",
+        isCenter ? "text-indigo-400 border-slate-800" : "text-indigo-600 border-slate-100"
+      )}>
+        {isCenter ? "Lihat Detail Aspek →" : "Geser ke Tengah"}
+      </div>
+    </div>
+  );
+};
 
 export const QuizIntro: React.FC<QuizIntroProps> = ({
   onStart,
@@ -20,6 +121,42 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+
+  const bentoItems: BentoItem[] = [
+    {
+      color: '#ffffff',
+      title: 'Durasi Tes',
+      description: 'Tes dibatasi maksimal 15 menit saja.',
+      label: 'Batas Waktu',
+      icon: <Timer className="w-5 h-5 text-violet-600" />,
+      bgIcon: 'p-2 bg-violet-50 text-violet-600 rounded-xl shrink-0',
+    },
+    {
+      color: '#ffffff',
+      title: 'Jumlah Pertanyaan',
+      description: '80 pertanyaan pilihan ganda skala Likert.',
+      label: 'Pertanyaan',
+      icon: <ClipboardList className="w-5 h-5 text-blue-600" />,
+      bgIcon: 'p-2 bg-blue-50 text-blue-600 rounded-xl shrink-0',
+    },
+    {
+      color: '#ffffff',
+      title: 'Skor Penilaian',
+      description: 'Rentang skor jawaban berkisar antara nilai 1 hingga 5.',
+      label: 'Rentang Nilai',
+      icon: <BarChart3 className="w-5 h-5 text-amber-600" />,
+      bgIcon: 'p-2 bg-amber-50 text-amber-600 rounded-xl shrink-0',
+    },
+    {
+      color: '#ffffff',
+      title: 'Autentisitas Jawaban',
+      description: 'Isilah sejujur mungkin sesuai dengan kepribadian Anda untuk mendapatkan rekomendasi jurusan kuliah dan karir yang akurat.',
+      label: 'Validitas Hasil',
+      icon: <ShieldCheck className="w-5 h-5 text-emerald-600" />,
+      bgIcon: 'p-2 bg-emerald-50 text-emerald-600 rounded-xl shrink-0',
+      gridClass: 'bento-span-3',
+    },
+  ];
 
   // GSAP enter animations on mount
   useEffect(() => {
@@ -32,17 +169,6 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
       duration: 0.8,
       stagger: 0.15,
       ease: "power2.out",
-      clearProps: "all"
-    });
-
-    // Stagger animate classroom cards
-    gsap.from(".gsap-card", {
-      opacity: 0,
-      scale: 0.9,
-      y: 15,
-      duration: 0.6,
-      stagger: 0.08,
-      ease: "back.out(1.4)",
       clearProps: "all"
     });
   }, []);
@@ -79,25 +205,73 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
     };
   }, [selectedRoom]);
 
-  // List of classrooms
+  // List of classrooms (aspekt)
   const classrooms = [
-    { dimension: "linguistik" as Dimension, code: "", name: "Kecerdasan Bahasa (Linguistik)", description: "Mengasah menulis, sastra, & tata bahasa.", icon: <MessageSquare className="w-5 h-5 text-purple-600" /> },
-    { dimension: "matematis" as Dimension, code: "", name: "Kecerdasan Logika & Matematika", description: "Menguji angka, penalaran, & analisis.", icon: <Calculator className="w-5 h-5 text-blue-600" /> },
-    { dimension: "spasial" as Dimension, code: "", name: "Kecerdasan Visual & Spasial", description: "Sketsa visual 3D, kreativitas, & ruang.", icon: <Compass className="w-5 h-5 text-amber-650" /> },
-    { dimension: "kinestetik" as Dimension, code: "", name: "Kecerdasan Kinestetik & Jasmani", description: "Ketangkasan fisik, koordinasi, & gerak.", icon: <Activity className="w-5 h-5 text-orange-650" /> },
-    { dimension: "musikal" as Dimension, code: "", name: "Kecerdasan Musik & Harmoni", description: "Melodi, irama nada, & harmoni instrumen.", icon: <Music className="w-5 h-5 text-pink-650" /> },
-    { dimension: "interpersonal" as Dimension, code: "", name: "Kecerdasan Interpersonal (Sosial)", description: "Kolaborasi tim, empati, & komunikasi.", icon: <Users className="w-5 h-5 text-teal-650" /> },
-    { dimension: "intrapersonal" as Dimension, code: "", name: "Kecerdasan Intrapersonal (Diri)", description: "Refleksi karakter, mental, & emosi diri.", icon: <User className="w-5 h-5 text-indigo-650" /> },
-    { dimension: "naturalis" as Dimension, code: "", name: "Kecerdasan Naturalis (Alam)", description: "Ekosistem alam, ekologi, & flora-fauna.", icon: <Leaf className="w-5 h-5 text-emerald-650" /> },
+    { dimension: "linguistik" as Dimension, code: "", name: "Kecerdasan Bahasa (Linguistik)", description: "Mengasah menulis, sastra, & tata bahasa.", icon: <MessageSquare className="w-5 h-5 text-purple-650" />, bgIcon: "bg-purple-50" },
+    { dimension: "matematis" as Dimension, code: "", name: "Kecerdasan Logika & Matematika", description: "Menguji angka, penalaran, & analisis.", icon: <Calculator className="w-5 h-5 text-blue-650" />, bgIcon: "bg-blue-50" },
+    { dimension: "spasial" as Dimension, code: "", name: "Kecerdasan Visual & Spasial", description: "Sketsa visual 3D, kreativitas, & ruang.", icon: <Compass className="w-5 h-5 text-amber-650" />, bgIcon: "bg-amber-50" },
+    { dimension: "kinestetik" as Dimension, code: "", name: "Kecerdasan Kinestetik & Jasmani", description: "Ketangkasan fisik, koordinasi, & gerak.", icon: <Activity className="w-5 h-5 text-orange-650" />, bgIcon: "bg-orange-50" },
+    { dimension: "musikal" as Dimension, code: "", name: "Kecerdasan Musik & Harmoni", description: "Melodi, irama nada, & harmoni instrumen.", icon: <Music className="w-5 h-5 text-pink-650" />, bgIcon: "bg-pink-50" },
+    { dimension: "interpersonal" as Dimension, code: "", name: "Kecerdasan Interpersonal (Sosial)", description: "Kolaborasi tim, empati, & komunikasi.", icon: <Users className="w-5 h-5 text-teal-650" />, bgIcon: "bg-teal-50" },
+    { dimension: "intrapersonal" as Dimension, code: "", name: "Kecerdasan Intrapersonal (Diri)", description: "Refleksi karakter, mental, & emosi diri.", icon: <User className="w-5 h-5 text-indigo-650" />, bgIcon: "bg-indigo-50" },
+    { dimension: "naturalis" as Dimension, code: "", name: "Kecerdasan Naturalis (Alam)", description: "Ekosistem alam, ekologi, & flora-fauna.", icon: <Leaf className="w-5 h-5 text-emerald-650" />, bgIcon: "bg-emerald-50" }
   ];
 
+  const initialAspects = classrooms.map((c, i) => ({
+    ...c,
+    tempId: i
+  }));
+
+  const [aspectsList, setAspectsList] = useState(initialAspects);
+  const [cardSize, setCardSize] = useState(365);
+
+  const handleMove = (steps: number) => {
+    const newList = [...aspectsList];
+    if (steps > 0) {
+      for (let i = steps; i > 0; i--) {
+        const item = newList.shift();
+        if (!item) return;
+        newList.push({ ...item, tempId: Math.random() });
+      }
+    } else {
+      for (let i = steps; i < 0; i++) {
+        const item = newList.pop();
+        if (!item) return;
+        newList.unshift({ ...item, tempId: Math.random() });
+      }
+    }
+    setAspectsList(newList);
+  };
+
+  useEffect(() => {
+    const updateSize = () => {
+      const { matches } = window.matchMedia("(min-width: 640px)");
+      setCardSize(matches ? 350 : 280);
+    };
+
+    updateSize();
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
+
   return (
-    <div ref={containerRef} className="max-w-4xl mx-auto flex flex-col gap-8 text-slate-900 py-8 select-none">
+    <div ref={containerRef} className="max-w-4xl mx-auto flex flex-col gap-10 text-slate-900 py-6 select-none relative z-10">
       
       {/* Hero Section */}
-      <div className="text-center flex flex-col gap-4 py-8 gsap-animate">
+      <div className="text-center flex flex-col gap-4 py-4 gsap-animate">
         <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 leading-none">
-          Tes <span className="font-serif italic font-normal text-indigo-600">Kecerdasan Majemuk</span>
+          Tes{" "}
+          <TextType 
+            text={["Kecerdasan Majemuk", "Potensi Minat & Bakat", "Rekomendasi Jurusan & Karir"]}
+            as="span"
+            className="font-serif italic font-normal text-indigo-600 inline-block"
+            typingSpeed={80}
+            deletingSpeed={40}
+            pauseDuration={2500}
+            showCursor={true}
+            cursorCharacter="|"
+            cursorClassName="text-indigo-500 font-light ml-1"
+          />
         </h1>
         <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
           Temukan potensi dominan Anda berdasarkan Teori Kecerdasan Majemuk (Multiple Intelligences) untuk kecocokan jurusan kuliah dan profesi masa depan Anda.
@@ -117,49 +291,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-6 pt-6">
-          <div className="grid sm:grid-cols-2 gap-4 text-slate-700">
-            
-            <div className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50/50 border border-slate-100/80">
-              <div className="p-2.5 bg-violet-50 text-violet-600 rounded-xl shrink-0">
-                <Timer className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-bold text-slate-900 text-sm">Durasi Tes</h4>
-                <p className="text-xs text-slate-500 mt-0.5">Tes dibatasi maksimal 15 menit saja.</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50/50 border border-slate-100/80">
-              <div className="p-2.5 bg-blue-50 text-blue-600 rounded-xl shrink-0">
-                <ClipboardList className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-bold text-slate-900 text-sm">Jumlah Pertanyaan</h4>
-                <p className="text-xs text-slate-500 mt-0.5">80 pertanyaan pilihan ganda skala Likert.</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50/50 border border-slate-100/80">
-              <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl shrink-0">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-bold text-slate-900 text-sm">Autentisitas Jawaban</h4>
-                <p className="text-xs text-slate-500 mt-0.5">Isilah sejujur mungkin sesuai dengan kepribadian Anda.</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50/50 border border-slate-100/80">
-              <div className="p-2.5 bg-amber-50 text-amber-600 rounded-xl shrink-0">
-                <BarChart3 className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-bold text-slate-900 text-sm">Skor Penilaian</h4>
-                <p className="text-xs text-slate-500 mt-0.5">Rentang skor berkisar antara nilai 1 hingga 5.</p>
-              </div>
-            </div>
-
-          </div>
+          <MagicBento items={bentoItems} glowColor="99, 102, 241" spotlightRadius={250} />
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 border-t border-slate-100">
             <Button variant="primary" size="lg" className="w-full sm:w-auto" onClick={onStart}>
@@ -180,38 +312,49 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
         </CardContent>
       </Card>
 
-      {/* 8 Areas Grid */}
-      <div className="flex flex-col gap-4">
-        <h3 className="text-xl font-extrabold text-slate-900 text-center gsap-animate">
+      {/* 8 Areas Stagger Deck */}
+      <div className="flex flex-col gap-6 relative">
+        <h3 className="text-xl font-extrabold text-slate-900 text-center">
           Aspek <span className="font-serif italic font-normal text-indigo-600">Kecerdasan Majemuk</span>
         </h3>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {classrooms.map((room) => (
-            <div
-              key={room.dimension}
-              onClick={() => setSelectedRoom(room.dimension)}
-              className="gsap-card cursor-pointer group relative overflow-hidden bg-white border border-slate-200 rounded-2xl p-5 hover:border-indigo-400 hover:shadow-lg transition-all duration-300 flex flex-col gap-4 shadow-sm"
+        
+        <div
+          className="relative w-full overflow-hidden bg-slate-100/20 rounded-3xl border border-slate-200/50"
+          style={{ height: 500 }}
+        >
+          {aspectsList.map((aspect, index) => {
+            const position = aspectsList.length % 2
+              ? index - (aspectsList.length - 1) / 2
+              : index - aspectsList.length / 2;
+            return (
+              <AspectCard
+                key={aspect.tempId}
+                aspect={aspect}
+                handleMove={handleMove}
+                setSelectedRoom={setSelectedRoom}
+                position={position}
+                cardSize={cardSize}
+              />
+            );
+          })}
+          
+          {/* Navigation Buttons */}
+          <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-3 z-20">
+            <button
+              onClick={() => handleMove(-1)}
+              className="flex h-12 w-12 items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-650 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm focus:outline-none cursor-pointer active:scale-95"
+              aria-label="Previous aspect"
             >
-              <div className="flex justify-end items-start">
-                <div className="p-2 rounded-xl bg-slate-50 text-slate-600 group-hover:bg-indigo-50 group-hover:text-indigo-650 transition-colors">
-                  {room.icon}
-                </div>
-              </div>
-              
-              <div className="flex flex-col gap-1">
-                <h4 className="font-extrabold text-sm text-slate-800 group-hover:text-indigo-950 transition-colors">
-                  {room.name}
-                </h4>
-                <p className="text-[11px] text-slate-450 leading-relaxed">
-                  {room.description}
-                </p>
-              </div>
-
-              <div className="text-[10px] font-bold text-indigo-500 flex items-center gap-1 group-hover:translate-x-1 transition-transform select-none">
-                Lihat Detail &rarr;
-              </div>
-            </div>
-          ))}
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => handleMove(1)}
+              className="flex h-12 w-12 items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-650 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm focus:outline-none cursor-pointer active:scale-95"
+              aria-label="Next aspect"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
         </div>
       </div>
 

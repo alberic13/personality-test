@@ -48,10 +48,11 @@ export async function POST(request: Request) {
 
     const result = await response.json();
     return NextResponse.json(result);
-  } catch (error: any) {
+  } catch (error) {
     console.error("Gagal mengirim data ke Google Sheets:", error);
+    const errorMessage = error instanceof Error ? error.message : "Internal Server Error";
     return NextResponse.json(
-      { status: "error", message: error.message || "Internal Server Error" },
+      { status: "error", message: errorMessage },
       { status: 500 }
     );
   }

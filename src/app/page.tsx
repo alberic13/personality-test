@@ -1,15 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Question, Answer, QuizResult as QuizResultType } from "../types/quiz";
+import React, { useState, useEffect, useCallback } from "react";
+import { Answer, QuizResult as QuizResultType } from "../types/quiz";
 import { questions } from "../data/questions";
 import { calculateQuizResult, getIntelligenceScoresList } from "../lib/quiz-engine";
 import { LeadModal } from "../components/quiz/LeadModal";
 import { QuizIntro } from "../components/quiz/QuizIntro";
 import { QuizCard } from "../components/quiz/QuizCard";
 import { QuizResult } from "../components/quiz/QuizResult";
-import { SchoolGate } from "../components/quiz/SchoolGate";
-import { Sparkles, Sun, Moon } from "lucide-react";
 
 export default function Home() {
   const [viewState, setViewState] = useState<"welcome" | "intro" | "quiz" | "result">("intro");
@@ -26,29 +24,30 @@ export default function Home() {
   const [timeLeft, setTimeLeft] = useState<number>(900);
   const [isTimeOut, setIsTimeOut] = useState(false);
 
+  // Handler submit otomatis saat waktu habis
+  const handleAutoSubmit = useCallback(() => {
+    setIsTimeOut(true);
+    setPendingAnswers(answers);
+    setIsLeadModalOpen(true);
+  }, [answers]);
+
   // Timer Countdown Effect
   useEffect(() => {
     if (viewState !== "quiz") return;
 
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          handleAutoSubmit();
-          return 0;
-        }
-        return prev - 1;
+         if (prev <= 1) {
+           clearInterval(interval);
+           handleAutoSubmit();
+           return 0;
+         }
+         return prev - 1;
       });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [viewState]);
-
-  const handleAutoSubmit = () => {
-    setIsTimeOut(true);
-    setPendingAnswers(answers);
-    setIsLeadModalOpen(true);
-  };
+  }, [viewState, handleAutoSubmit]);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);

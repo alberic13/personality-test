@@ -101,7 +101,7 @@ export const QuizCard: React.FC<QuizCardProps> = ({
       <Card className="min-h-[400px] flex flex-col justify-between transition-all duration-300">
         <CardContent className="flex flex-col items-center justify-center text-center px-4 my-8">
           <h2 ref={questionRef} className="text-xl sm:text-3xl font-bold leading-relaxed text-zinc-800 max-w-2xl select-none">
-            "{currentQuestion.text}"
+            &quot;{currentQuestion.text}&quot;
           </h2>
 
           {/* Likert Scale Container */}

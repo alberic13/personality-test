@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { QuizResult as QuizResultType, Dimension } from "../../types/quiz";
 import { intelligences } from "../../data/intelligences";
 import { getIntelligenceScoresList } from "../../lib/quiz-engine";
-import { Card, CardContent } from "../ui/Card";
+import { Card } from "../ui/Card";
 import { Button } from "../ui/Button";
 import { Award, Briefcase, RefreshCw, Star, AlertCircle, Home, GraduationCap, ChevronRight, Printer } from "lucide-react";
 import gsap from "gsap";

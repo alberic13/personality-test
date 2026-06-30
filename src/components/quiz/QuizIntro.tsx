@@ -166,14 +166,16 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
               Mulai Ujian Utama
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="w-full sm:w-auto border-dashed" 
-              onClick={onSimulate}
-            >
-              Demo Instan (Acak)
-            </Button>
+            {process.env.NODE_ENV === "development" && (
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="w-full sm:w-auto border-dashed" 
+                onClick={onSimulate}
+              >
+                Demo Instan (Acak)
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>

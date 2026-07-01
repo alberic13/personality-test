@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../ui/Card";
 import { Button } from "../ui/Button";
-import { MessageSquare, Calculator, Compass, Activity, Music, Users, User, Leaf, ArrowRight, Timer, ClipboardList, ShieldCheck, BarChart3, ChevronLeft, ChevronRight, Wrench, Search, Palette, Heart, TrendingUp, FileText } from "lucide-react";
+import { MessageSquare, Calculator, Compass, Activity, Music, Users, User, Leaf, ArrowRight, ClipboardList, ShieldCheck, BarChart3, ChevronLeft, ChevronRight, Wrench, Search, Palette, Heart, TrendingUp, FileText } from "lucide-react";
 import { Dimension } from "../../types/quiz";
 import { intelligences } from "../../data/intelligences";
 import { riasecTypes } from "../../data/riasec";
@@ -135,14 +135,6 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
   const bentoItems: BentoItem[] = [
     {
       color: '#ffffff',
-      title: 'Durasi Tes',
-      description: 'Tes dibatasi maksimal 15 menit saja.',
-      label: 'Batas Waktu',
-      icon: <Timer className="w-5 h-5 text-violet-600" />,
-      bgIcon: 'p-2 bg-violet-50 text-violet-600 rounded-xl shrink-0',
-    },
-    {
-      color: '#ffffff',
       title: 'Jumlah Pertanyaan',
       description: isRiasec 
         ? '42 pertanyaan pilihan ganda skala Likert.' 
@@ -170,7 +162,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
       label: 'Validitas Hasil',
       icon: <ShieldCheck className="w-5 h-5 text-emerald-600" />,
       bgIcon: 'p-2 bg-emerald-50 text-emerald-600 rounded-xl shrink-0',
-      gridClass: 'bento-span-3',
+      gridClass: 'bento-span-2',
     },
   ];
 

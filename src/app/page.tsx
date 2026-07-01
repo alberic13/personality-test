@@ -26,10 +26,6 @@ export default function Home() {
   const [isSubmittingLead, setIsSubmittingLead] = useState(false);
   const [pendingAnswers, setPendingAnswers] = useState<Answer[] | null>(null);
 
-  // States untuk Timer Mundur 15 Menit (900 detik)
-  const [timeLeft, setTimeLeft] = useState<number>(900);
-  const [isTimeOut, setIsTimeOut] = useState(false);
-
   const activeQuestions =
     testType === "riasec"
       ? riasecQuestions
@@ -37,42 +33,9 @@ export default function Home() {
         ? gayaBelajarQuestions
         : multipleIntelligenceQuestions;
 
-  // Handler submit otomatis saat waktu habis
-  const handleAutoSubmit = useCallback(() => {
-    setIsTimeOut(true);
-    setPendingAnswers(answers);
-    setIsLeadModalOpen(true);
-  }, [answers]);
-
-  // Timer Countdown Effect
-  useEffect(() => {
-    if (viewState !== "quiz") return;
-
-    const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-         if (prev <= 1) {
-           clearInterval(interval);
-           handleAutoSubmit();
-           return 0;
-         }
-         return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [viewState, handleAutoSubmit]);
-
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-  };
-
   const handleStartQuiz = () => {
     setAnswers([]);
     setCurrentIndex(0);
-    setTimeLeft(900); // Reset timer ke 15 menit (900 detik)
-    setIsTimeOut(false);
     setViewState("quiz");
   };
 
@@ -98,7 +61,6 @@ export default function Home() {
   const handleSubmitQuiz = () => {
     if (answers.length < activeQuestions.length) return;
     setPendingAnswers(answers);
-    setIsTimeOut(false);
     setIsLeadModalOpen(true);
   };
 
@@ -108,7 +70,6 @@ export default function Home() {
       return { questionId: q.id, score: randomScore };
     });
     setPendingAnswers(mockAnswers);
-    setIsTimeOut(false);
     setIsLeadModalOpen(true);
   };
 
@@ -326,7 +287,6 @@ export default function Home() {
             onPrev={handlePrev}
             onNext={handleNext}
             onSubmit={handleSubmitQuiz}
-            formattedTime={formatTime(timeLeft)}
           />
         )}
 
@@ -363,7 +323,6 @@ export default function Home() {
         }}
         onSubmit={handleLeadSubmit}
         isSubmitting={isSubmittingLead}
-        isTimeOut={isTimeOut}
       />
     </div>
   );

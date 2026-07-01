@@ -14,7 +14,6 @@ interface QuizCardProps {
   onPrev: () => void;
   onNext: () => void;
   onSubmit: () => void;
-  formattedTime: string;
 }
 
 export const QuizCard: React.FC<QuizCardProps> = ({
@@ -25,7 +24,6 @@ export const QuizCard: React.FC<QuizCardProps> = ({
   onPrev,
   onNext,
   onSubmit,
-  formattedTime,
 }) => {
   const currentQuestion = questions[currentIndex];
   const currentAnswer = answers.find((a) => a.questionId === currentQuestion.id);
@@ -88,9 +86,6 @@ export const QuizCard: React.FC<QuizCardProps> = ({
       {/* Header Info */}
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-0 justify-between items-center text-sm font-semibold text-slate-500">
         <span>Pertanyaan {currentIndex + 1} dari {totalQuestions}</span>
-        <span className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-rose-50 text-rose-600 font-extrabold shadow-sm select-none border border-rose-100/50">
-          ⏱️ {formattedTime}
-        </span>
         <span>Progres: {progressPercent}%</span>
       </div>
 

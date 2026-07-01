@@ -8,7 +8,6 @@ interface LeadModalProps {
   onClose: () => void;
   onSubmit: (name: string, email: string) => void;
   isSubmitting: boolean;
-  isTimeOut?: boolean;
 }
 
 export const LeadModal: React.FC<LeadModalProps> = ({
@@ -16,7 +15,6 @@ export const LeadModal: React.FC<LeadModalProps> = ({
   onClose,
   onSubmit,
   isSubmitting,
-  isTimeOut = false,
 }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -72,33 +70,23 @@ export const LeadModal: React.FC<LeadModalProps> = ({
       <div ref={cardRef} className="bg-white border border-slate-100 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl flex flex-col gap-5 relative">
         
         {/* Close button */}
-        {!isTimeOut && (
-          <button 
-            onClick={onClose} 
-            className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 font-bold p-1 cursor-pointer"
-            title="Batal"
-          >
-            ✕
-          </button>
-        )}
+        <button 
+          onClick={onClose} 
+          className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 font-bold p-1 cursor-pointer"
+          title="Batal"
+        >
+          ✕
+        </button>
 
         <div className="flex flex-col gap-2 text-center">
-          {isTimeOut ? (
-            <div className="p-3 rounded-2xl bg-rose-50 border border-rose-100 text-rose-600 text-xs sm:text-sm font-extrabold leading-relaxed mb-2">
-              ⏰ Waktu Anda telah habis (15 menit)!
-            </div>
-          ) : (
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 font-black text-xl italic tracking-tighter mx-auto select-none">
-              Z
-            </div>
-          )}
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 font-black text-xl italic tracking-tighter mx-auto select-none">
+            Z
+          </div>
           <h3 className="text-xl sm:text-2xl font-black text-slate-900 mt-1">
-            {isTimeOut ? "Kumpulkan Hasil Tes" : "Lihat Analisis Kecerdasan Anda"}
+            Lihat Analisis Hasil Anda
           </h3>
           <p className="text-xs sm:text-sm text-slate-500 leading-relaxed px-2">
-            {isTimeOut
-              ? "Masukkan nama dan email Anda di bawah untuk mengumpulkan hasil pengerjaan kuis Anda ke Google Sheets."
-              : "Masukkan nama dan email Anda untuk menyimpan hasil skoring dan membuka detail rekomendasi jurusan & profesi lengkap."}
+            Masukkan nama dan email Anda untuk menyimpan hasil skoring dan membuka detail rekomendasi jurusan & profesi lengkap.
           </p>
         </div>
 
@@ -150,24 +138,22 @@ export const LeadModal: React.FC<LeadModalProps> = ({
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 mt-4">
-            {!isTimeOut && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onClose}
-                disabled={isSubmitting}
-                className="w-full py-3"
-              >
-                Batal
-              </Button>
-            )}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={isSubmitting}
+              className="w-full py-3"
+            >
+              Batal
+            </Button>
             <Button
               type="submit"
               variant="primary"
               disabled={isSubmitting}
               className="w-full py-3"
             >
-              {isSubmitting ? "Mengirim..." : isTimeOut ? "Kumpulkan Jawaban" : "Kirim & Lihat Hasil"}
+              {isSubmitting ? "Mengirim..." : "Kirim & Lihat Hasil"}
             </Button>
           </div>
         </form>

@@ -179,11 +179,11 @@ export default function Home() {
         {viewState === "select-test" && (
           <div className="max-w-4xl mx-auto py-10 px-4 flex flex-col gap-10 items-center justify-center min-h-[70vh]">
             <div className="text-center flex flex-col gap-4 max-w-2xl">
-              <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 leading-tight md:leading-none flex flex-wrap items-center justify-center gap-x-3">
+              <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 leading-tight md:leading-none text-center">
                 Pilih{" "}
                 <RotatingText
                   texts={["Tes Evaluasi Diri", "Kecerdasan Majemuk", "Kepribadian RIASEC", "Arah Karir Anda"]}
-                  mainClassName="font-serif italic font-normal text-indigo-600 inline-flex overflow-hidden py-1"
+                  mainClassName="font-serif italic font-normal text-indigo-600 inline-flex overflow-hidden py-1 justify-center align-middle"
                   staggerFrom={"last"}
                   initial={{ y: "100%", opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}

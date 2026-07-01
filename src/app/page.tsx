@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Answer, QuizResult as QuizResultType } from "../types/quiz";
 import { questions as multipleIntelligenceQuestions } from "../data/questions";
 import { riasecQuestions } from "../data/riasec_questions";
+import { gayaBelajarQuestions } from "../data/gaya_belajar_questions";
 import { calculateQuizResult, getIntelligenceScoresList } from "../lib/quiz-engine";
 import { LeadModal } from "../components/quiz/LeadModal";
 import { QuizIntro } from "../components/quiz/QuizIntro";
@@ -14,7 +15,7 @@ import RotatingText from "../components/ui/RotatingText";
 import DecayCard from "../components/ui/DecayCard";
 
 export default function Home() {
-  const [testType, setTestType] = useState<"majemuk" | "riasec">("majemuk");
+  const [testType, setTestType] = useState<"majemuk" | "riasec" | "gaya-belajar">("majemuk");
   const [viewState, setViewState] = useState<"select-test" | "intro" | "quiz" | "result">("select-test");
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [answers, setAnswers] = useState<Answer[]>([]);
@@ -29,7 +30,12 @@ export default function Home() {
   const [timeLeft, setTimeLeft] = useState<number>(900);
   const [isTimeOut, setIsTimeOut] = useState(false);
 
-  const activeQuestions = testType === "riasec" ? riasecQuestions : multipleIntelligenceQuestions;
+  const activeQuestions =
+    testType === "riasec"
+      ? riasecQuestions
+      : testType === "gaya-belajar"
+        ? gayaBelajarQuestions
+        : multipleIntelligenceQuestions;
 
   // Handler submit otomatis saat waktu habis
   const handleAutoSubmit = useCallback(() => {
@@ -199,7 +205,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8 w-full max-w-3xl mt-4">
+            <div className="grid md:grid-cols-3 gap-6 w-full max-w-5xl mt-4">
               {/* Test Card 1: Kecerdasan Majemuk */}
               <DecayCard
                 width="100%"
@@ -209,7 +215,7 @@ export default function Home() {
                   setTestType("majemuk");
                   setViewState("intro");
                 }}
-                className="group rounded-3xl overflow-hidden border border-slate-100 shadow-[0_15px_35px_-5px_rgba(99,102,241,0.08),0_5px_15px_rgba(0,0,0,0.03)] hover:shadow-[0_25px_50px_-12px_rgba(99,102,241,0.18),0_10px_20px_rgba(99,102,241,0.05)] transition-shadow duration-300"
+                className="group rounded-3xl overflow-hidden border border-slate-100/50 shadow-[0_15px_30px_-5px_rgba(99,102,241,0.12),0_5px_15px_-3px_rgba(0,0,0,0.03)] hover:shadow-[0_30px_60px_-12px_rgba(99,102,241,0.25),0_15px_25px_-5px_rgba(99,102,241,0.08)] transition-all duration-300"
               >
                 <div className="flex flex-col justify-between w-full h-full p-8 bg-white/92 group-hover:bg-white/80 transition-colors duration-300 text-left">
                   <div className="flex flex-col gap-5">
@@ -242,7 +248,7 @@ export default function Home() {
                   setTestType("riasec");
                   setViewState("intro");
                 }}
-                className="group rounded-3xl overflow-hidden border border-slate-100 shadow-[0_15px_35px_-5px_rgba(139,92,246,0.08),0_5px_15px_rgba(0,0,0,0.03)] hover:shadow-[0_25px_50px_-12px_rgba(139,92,246,0.18),0_10px_20px_rgba(139,92,246,0.05)] transition-shadow duration-300"
+                className="group rounded-3xl overflow-hidden border border-slate-100/50 shadow-[0_15px_30px_-5px_rgba(139,92,246,0.12),0_5px_15px_-3px_rgba(0,0,0,0.03)] hover:shadow-[0_30px_60px_-12px_rgba(139,92,246,0.25),0_15px_25px_-5px_rgba(139,92,246,0.08)] transition-all duration-300"
               >
                 <div className="flex flex-col justify-between w-full h-full p-8 bg-white/92 group-hover:bg-white/80 transition-colors duration-300 text-left">
                   <div className="flex flex-col gap-5">
@@ -262,6 +268,39 @@ export default function Home() {
                   <div className="pt-4 border-t border-slate-200/60 flex items-center justify-between text-sm font-bold text-violet-600">
                     <span>Lihat Selengkapnya & Mulai →</span>
                     <span className="text-xs px-2.5 py-1 rounded-full bg-violet-50 text-violet-750">42 Pertanyaan</span>
+                  </div>
+                </div>
+              </DecayCard>
+
+              {/* Test Card 3: Gaya Belajar (VAK) */}
+              <DecayCard
+                width="100%"
+                height={400}
+                image="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=600&auto=format&fit=crop"
+                onClick={() => {
+                  setTestType("gaya-belajar");
+                  setViewState("intro");
+                }}
+                className="group rounded-3xl overflow-hidden border border-slate-100/50 shadow-[0_15px_30px_-5px_rgba(16,185,129,0.12),0_5px_15px_-3px_rgba(0,0,0,0.03)] hover:shadow-[0_30px_60px_-12px_rgba(16,185,129,0.25),0_15px_25px_-5px_rgba(16,185,129,0.08)] transition-all duration-300"
+              >
+                <div className="flex flex-col justify-between w-full h-full p-8 bg-white/92 group-hover:bg-white/80 transition-colors duration-300 text-left">
+                  <div className="flex flex-col gap-5">
+                    <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-650 flex items-center justify-center font-extrabold shadow-inner group-hover:scale-110 transition-transform">
+                      <Brain className="w-7 h-7" />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <h2 className="text-xl sm:text-2xl font-black text-slate-900 group-hover:text-emerald-650 transition-colors min-h-[56px] flex items-center">
+                        Gaya Belajar (VAK)
+                      </h2>
+                      <p className="text-sm text-slate-500 leading-relaxed min-h-[80px]">
+                        Temukan metode belajar terbaik Anda (Visual, Auditori, atau Kinestetik) agar proses penyerapan informasi lebih efektif dan optimal.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-200/60 flex items-center justify-between text-sm font-bold text-emerald-600">
+                    <span>Lihat Selengkapnya & Mulai →</span>
+                    <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-750">27 Pertanyaan</span>
                   </div>
                 </div>
               </DecayCard>

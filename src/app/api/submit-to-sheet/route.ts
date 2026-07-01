@@ -26,7 +26,7 @@ export async function POST(request: Request) {
       linguistik: scores.linguistik || 0,
       matematis: scores.matematis || 0,
       spasial: scores.spasial || 0,
-      kinestetik: scores.kinestetik || 0,
+      kinestetik: testType === "gaya-belajar" ? (scores.gaya_kinestetik || 0) : (scores.kinestetik || 0),
       musikal: scores.musikal || 0,
       interpersonal: scores.interpersonal || 0,
       intrapersonal: scores.intrapersonal || 0,
@@ -38,6 +38,12 @@ export async function POST(request: Request) {
       social: scores.social || 0,
       enterprising: scores.enterprising || 0,
       conventional: scores.conventional || 0,
+      // Gaya Belajar
+      gaya_visual: scores.gaya_visual || 0,
+      gaya_auditori: scores.gaya_auditori || 0,
+      gaya_kinestetik: scores.gaya_kinestetik || 0,
+      visual: scores.gaya_visual || 0,
+      auditori: scores.gaya_auditori || 0,
 
       dominant: dominant.join(", "),
       date: date || new Date().toISOString()

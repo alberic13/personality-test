@@ -1,15 +1,23 @@
 import { Answer, Dimension, IntelligenceScore, QuizResult } from "../types/quiz";
 import { questions as multipleIntelligenceQuestions } from "../data/questions";
 import { riasecQuestions } from "../data/riasec_questions";
+import { gayaBelajarQuestions } from "../data/gaya_belajar_questions";
 
-export function calculateQuizResult(answers: Answer[], testType: "majemuk" | "riasec" = "majemuk"): QuizResult {
+export function calculateQuizResult(answers: Answer[], testType: "majemuk" | "riasec" | "gaya-belajar" = "majemuk"): QuizResult {
   const isRiasec = testType === "riasec";
+  const isGayaBelajar = testType === "gaya-belajar";
   const dimensions: Dimension[] = isRiasec
     ? ["realistic", "investigative", "artistic", "social", "enterprising", "conventional"]
-    : ["linguistik", "matematis", "spasial", "kinestetik", "musikal", "interpersonal", "intrapersonal", "naturalis"];
+    : isGayaBelajar
+      ? ["gaya_visual", "gaya_auditori", "gaya_kinestetik"]
+      : ["linguistik", "matematis", "spasial", "kinestetik", "musikal", "interpersonal", "intrapersonal", "naturalis"];
   
-  const activeQuestions = isRiasec ? riasecQuestions : multipleIntelligenceQuestions;
-  const maxScorePerDim = isRiasec ? 35 : 50; // 7 Qs * 5 vs 10 Qs * 5
+  const activeQuestions = isRiasec 
+    ? riasecQuestions 
+    : isGayaBelajar 
+      ? gayaBelajarQuestions 
+      : multipleIntelligenceQuestions;
+  const maxScorePerDim = isRiasec ? 35 : (isGayaBelajar ? 45 : 50); // 7 Qs * 5 vs 9 Qs * 5 vs 10 Qs * 5
 
   const scores: Record<string, number> = {};
   const rawScores: Record<string, number> = {};
@@ -62,7 +70,12 @@ export function calculateQuizResult(answers: Answer[], testType: "majemuk" | "ri
 export function getIntelligenceScoresList(result: QuizResult): IntelligenceScore[] {
   const testType = result.testType || "majemuk";
   const isRiasec = testType === "riasec";
-  const activeQuestions = isRiasec ? riasecQuestions : multipleIntelligenceQuestions;
+  const isGayaBelajar = testType === "gaya-belajar";
+  const activeQuestions = isRiasec 
+    ? riasecQuestions 
+    : isGayaBelajar 
+      ? gayaBelajarQuestions 
+      : multipleIntelligenceQuestions;
 
   const labelMap: Record<Dimension, string> = {
     // Majemuk
@@ -81,11 +94,17 @@ export function getIntelligenceScoresList(result: QuizResult): IntelligenceScore
     social: "Social (Sosial)",
     enterprising: "Enterprising (Giat)",
     conventional: "Conventional (Konvensional)",
+    // Gaya Belajar
+    gaya_visual: "Visual (Gaya Belajar Visual)",
+    gaya_auditori: "Auditori (Gaya Belajar Auditori)",
+    gaya_kinestetik: "Kinestetik (Gaya Belajar Kinestetik)",
   };
 
   const dimensions = isRiasec
     ? ["realistic" as Dimension, "investigative" as Dimension, "artistic" as Dimension, "social" as Dimension, "enterprising" as Dimension, "conventional" as Dimension]
-    : ["linguistik" as Dimension, "matematis" as Dimension, "spasial" as Dimension, "kinestetik" as Dimension, "musikal" as Dimension, "interpersonal" as Dimension, "intrapersonal" as Dimension, "naturalis" as Dimension];
+    : isGayaBelajar
+      ? ["gaya_visual" as Dimension, "gaya_auditori" as Dimension, "gaya_kinestetik" as Dimension]
+      : ["linguistik" as Dimension, "matematis" as Dimension, "spasial" as Dimension, "kinestetik" as Dimension, "musikal" as Dimension, "interpersonal" as Dimension, "intrapersonal" as Dimension, "naturalis" as Dimension];
 
   return dimensions.map((dim) => {
     // Kembalikan skor mentah dari jawaban asli

@@ -12,7 +12,10 @@ export type Dimension =
   | "artistic"
   | "social"
   | "enterprising"
-  | "conventional";
+  | "conventional"
+  | "gaya_visual"
+  | "gaya_auditori"
+  | "gaya_kinestetik";
 
 export interface Question {
   id: number;
@@ -38,7 +41,7 @@ export interface QuizResult {
   scores: Record<string, number>; // Persentase per dimensi (using string to handle dynamic types cleanly)
   date: string;
   answers: Answer[];
-  testType?: "majemuk" | "riasec";
+  testType?: "majemuk" | "riasec" | "gaya-belajar";
   name?: string;
   email?: string;
 }

@@ -19,7 +19,13 @@ function doPost(e) {
     var testType = data.testType || "majemuk";
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     
-    var sheetName = testType === "riasec" ? "RIASEC" : "Kecerdasan Majemuk";
+    var sheetName = "Kecerdasan Majemuk";
+    if (testType === "riasec") {
+      sheetName = "RIASEC";
+    } else if (testType === "gaya-belajar") {
+      sheetName = "Gaya Belajar";
+    }
+    
     var sheet = ss.getSheetByName(sheetName);
     if (!sheet) {
       sheet = ss.insertSheet(sheetName);
@@ -39,6 +45,16 @@ function doPost(e) {
           "Enterprising",
           "Conventional",
           "Tipe Dominan"
+        ]);
+      } else if (testType === "gaya-belajar") {
+        sheet.appendRow([
+          "Tanggal & Waktu",
+          "Nama Lengkap",
+          "Alamat Email",
+          "Visual",
+          "Auditori",
+          "Kinestetik",
+          "Gaya Dominan"
         ]);
       } else {
         sheet.appendRow([
@@ -70,6 +86,16 @@ function doPost(e) {
         data.social,
         data.enterprising,
         data.conventional,
+        data.dominant
+      ]);
+    } else if (testType === "gaya-belajar") {
+      sheet.appendRow([
+        new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }),
+        data.name,
+        data.email,
+        data.visual,
+        data.auditori,
+        data.kinestetik,
         data.dominant
       ]);
     } else {

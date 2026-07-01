@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { QuizResult as QuizResultType, Dimension } from "../../types/quiz";
 import { intelligences } from "../../data/intelligences";
 import { riasecTypes } from "../../data/riasec";
+import { gayaBelajarTypes } from "../../data/gaya_belajar";
 import { getIntelligenceScoresList } from "../../lib/quiz-engine";
 import { Card } from "../ui/Card";
 import { Button } from "../ui/Button";
@@ -21,23 +22,30 @@ export const QuizResult: React.FC<QuizResultProps> = ({
 }) => {
   const testType = result.testType || "majemuk";
   const isRiasec = testType === "riasec";
-  const activeData = isRiasec ? riasecTypes : intelligences;
+  const isGayaBelajar = testType === "gaya-belajar";
+  const activeData = isRiasec 
+    ? riasecTypes 
+    : isGayaBelajar 
+      ? gayaBelajarTypes 
+      : intelligences;
 
   const scoresList = getIntelligenceScoresList(result);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const dimensionsOrder: Dimension[] = isRiasec
     ? ["realistic", "investigative", "artistic", "social", "enterprising", "conventional"]
-    : [
-        "linguistik",
-        "matematis",
-        "spasial",
-        "kinestetik",
-        "musikal",
-        "interpersonal",
-        "intrapersonal",
-        "naturalis",
-      ];
+    : isGayaBelajar
+      ? ["gaya_visual", "gaya_auditori", "gaya_kinestetik"]
+      : [
+          "linguistik",
+          "matematis",
+          "spasial",
+          "kinestetik",
+          "musikal",
+          "interpersonal",
+          "intrapersonal",
+          "naturalis",
+        ];
 
   const orderedScores = dimensionsOrder.map((dim) => {
     return scoresList.find((s) => s.dimension === dim)!;
@@ -45,7 +53,7 @@ export const QuizResult: React.FC<QuizResultProps> = ({
   
   // State untuk memilih kecerdasan/kepribadian dominan mana yang sedang ditampilkan detailnya
   const [selectedDominant, setSelectedDominant] = useState<Dimension>(
-    result.dominantTypes[0] || (isRiasec ? "realistic" : "linguistik")
+    result.dominantTypes[0] || (isRiasec ? "realistic" : isGayaBelajar ? "gaya_visual" : "linguistik")
   );
 
   const isUndefinedResult = result.answers.length <= 1;
@@ -107,7 +115,11 @@ export const QuizResult: React.FC<QuizResultProps> = ({
   // Set dynamic document title for printing
   useEffect(() => {
     const originalTitle = document.title;
-    const testName = isRiasec ? "Kepribadian RIASEC" : "Kecerdasan Majemuk";
+    const testName = isRiasec 
+      ? "Kepribadian RIASEC" 
+      : isGayaBelajar 
+        ? "Gaya Belajar VAK" 
+        : "Kecerdasan Majemuk";
     const userName = result.name || "";
 
     if (userName) {
@@ -119,7 +131,7 @@ export const QuizResult: React.FC<QuizResultProps> = ({
     return () => {
       document.title = originalTitle;
     };
-  }, [result, isRiasec]);
+  }, [result, isRiasec, isGayaBelajar]);
 
   if (!pData) {
     return (
@@ -235,6 +247,28 @@ export const QuizResult: React.FC<QuizResultProps> = ({
           badgeBg: "bg-emerald-50 text-emerald-800 border-emerald-100",
           gradientText: "from-emerald-700 to-green-700",
         };
+      // Gaya Belajar
+      case "gaya_visual":
+        return {
+          bg: "from-indigo-500/8 via-indigo-500/2 to-transparent",
+          border: "border-indigo-100",
+          badgeBg: "bg-indigo-50 text-indigo-750 border-indigo-100",
+          gradientText: "from-indigo-700 to-indigo-850",
+        };
+      case "gaya_auditori":
+        return {
+          bg: "from-purple-500/8 via-purple-500/2 to-transparent",
+          border: "border-purple-100",
+          badgeBg: "bg-purple-50 text-purple-750 border-purple-100",
+          gradientText: "from-purple-700 to-purple-850",
+        };
+      case "gaya_kinestetik":
+        return {
+          bg: "from-orange-500/8 via-orange-500/2 to-transparent",
+          border: "border-orange-100",
+          badgeBg: "bg-orange-50 text-orange-850 border-orange-100",
+          gradientText: "from-orange-700 to-rose-700",
+        };
       default:
         return {
           bg: "from-slate-500/8 via-slate-400/2 to-transparent",
@@ -254,7 +288,7 @@ export const QuizResult: React.FC<QuizResultProps> = ({
   const maxRadius = 110;
   
   const numPoints = orderedScores.length;
-  const maxScore = isRiasec ? 35 : 50;
+  const maxScore = isRiasec ? 35 : isGayaBelajar ? 45 : 50;
 
   return (
     <div ref={containerRef} className="max-w-6xl mx-auto flex flex-col gap-8 text-slate-900">
@@ -263,10 +297,10 @@ export const QuizResult: React.FC<QuizResultProps> = ({
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-200 gap-2">
         <div>
           <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">
-            {isRiasec ? "Laporan Evaluasi Kepribadian" : "Laporan Evaluasi Kecerdasan"}
+            {isRiasec ? "Laporan Evaluasi Kepribadian" : isGayaBelajar ? "Laporan Gaya Belajar" : "Laporan Evaluasi Kecerdasan"}
           </span>
           <h2 className="text-2xl font-black text-slate-900 leading-tight">
-            {isRiasec ? "Tes Kepribadian RIASEC" : "Tes Kecerdasan Majemuk"}
+            {isRiasec ? "Tes Kepribadian RIASEC" : isGayaBelajar ? "Tes Gaya Belajar VAK" : "Tes Kecerdasan Majemuk"}
           </h2>
         </div>
         {result.name && (
@@ -284,18 +318,20 @@ export const QuizResult: React.FC<QuizResultProps> = ({
         </div>
         <div className="flex flex-col gap-3 text-center sm:text-left w-full">
           <span className="w-fit mx-auto sm:mx-0 px-3.5 py-1 rounded-full text-[10px] font-black tracking-widest bg-slate-900 text-white uppercase shadow-sm">
-            {isRiasec ? "Kepribadian Dominan" : "Kecerdasan Dominan"}
+            {isRiasec ? "Kepribadian Dominan" : isGayaBelajar ? "Gaya Belajar Dominan" : "Kecerdasan Dominan"}
           </span>
           
           {isMultipleDominant ? (
             <div className="flex flex-col gap-3">
               <h1 className="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
-                {isRiasec ? "Profil Kepribadian RIASEC Anda" : "Profil Kecerdasan Majemuk Anda"}
+                {isRiasec ? "Profil Kepribadian RIASEC Anda" : isGayaBelajar ? "Profil Gaya Belajar VAK Anda" : "Profil Kecerdasan Majemuk Anda"}
               </h1>
               <p className="text-sm text-slate-500 -mt-1 leading-relaxed">
                 {isRiasec 
                   ? "Anda memiliki beberapa tipe minat/kepribadian yang menonjol secara seimbang:"
-                  : "Anda memiliki beberapa area kecerdasan yang menonjol secara seimbang:"}
+                  : isGayaBelajar
+                    ? "Anda memiliki beberapa tipe gaya belajar yang menonjol secara seimbang:"
+                    : "Anda memiliki beberapa area kecerdasan yang menonjol secara seimbang:"}
               </p>
               {/* Render dominant types as badges */}
               <div className="flex flex-wrap justify-center sm:justify-start gap-2.5 mt-1">
@@ -307,7 +343,10 @@ export const QuizResult: React.FC<QuizResultProps> = ({
                     .replace(" (Artistik)", "")
                     .replace(" (Sosial)", "")
                     .replace(" (Giat / Enterprising)", "")
-                    .replace(" (Konvensional)", "");
+                    .replace(" (Konvensional)", "")
+                    .replace(" (Gaya Belajar Visual)", "")
+                    .replace(" (Gaya Belajar Auditori)", "")
+                    .replace(" (Gaya Belajar Kinestetik)", "");
                   const badgeColors = getThemeColors(type);
                   return (
                     <span 
@@ -328,7 +367,13 @@ export const QuizResult: React.FC<QuizResultProps> = ({
           ) : (
             <div>
               <h1 className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight">
-                {isUndefinedResult ? "undefined" : (isRiasec ? `Kepribadian ${activeData[result.dominantTypes[0]]?.name}` : `Kecerdasan ${activeData[result.dominantTypes[0]]?.name.replace("Kecerdasan ", "")}`)}
+                {isUndefinedResult 
+                  ? "undefined" 
+                  : (isRiasec 
+                    ? `Kepribadian ${activeData[result.dominantTypes[0]]?.name}` 
+                    : isGayaBelajar
+                      ? `Gaya Belajar ${activeData[result.dominantTypes[0]]?.name.replace(" (Gaya Belajar Visual)", "").replace(" (Gaya Belajar Auditori)", "").replace(" (Gaya Belajar Kinestetik)", "")}`
+                      : `Kecerdasan ${activeData[result.dominantTypes[0]]?.name.replace("Kecerdasan ", "")}`)}
               </h1>
               <p className="text-sm sm:text-base text-slate-500 mt-1">
                 {isUndefinedResult ? "undefined" : "Karakteristik berpikir Anda paling menonjol pada aspek ini."}
@@ -467,6 +512,9 @@ export const QuizResult: React.FC<QuizResultProps> = ({
                     social: "Social",
                     enterprising: "Enterprising",
                     conventional: "Conventional",
+                    gaya_visual: "Visual",
+                    gaya_auditori: "Auditori",
+                    gaya_kinestetik: "Kinestetik",
                   };
                   const label = shortNames[scoreItem.dimension];
                   const isDominant = result.dominantTypes.includes(scoreItem.dimension);
@@ -511,7 +559,10 @@ export const QuizResult: React.FC<QuizResultProps> = ({
                     .replace(" (Artistik)", "")
                     .replace(" (Sosial)", "")
                     .replace(" (Giat / Enterprising)", "")
-                    .replace(" (Konvensional)", "");
+                    .replace(" (Konvensional)", "")
+                    .replace(" (Gaya Belajar Visual)", "")
+                    .replace(" (Gaya Belajar Auditori)", "")
+                    .replace(" (Gaya Belajar Kinestetik)", "");
                   const tabTheme = getThemeColors(type);
                   return (
                     <button
@@ -537,7 +588,11 @@ export const QuizResult: React.FC<QuizResultProps> = ({
             <div className="flex flex-col gap-3 pb-8 border-b border-slate-100">
               <h4 className={`text-lg sm:text-xl font-extrabold flex items-center gap-2 text-slate-900`}>
                 <Star className="w-5.5 h-5.5 text-blue-600 fill-blue-600/10" />
-                {isRiasec ? `Penjelasan Tipe ${pData.name}` : `Penjelasan Kecerdasan ${pData.name.replace("Kecerdasan ", "")}`}
+                {isRiasec 
+                  ? `Penjelasan Tipe ${pData.name}` 
+                  : isGayaBelajar
+                    ? `Penjelasan ${pData.name}`
+                    : `Penjelasan Kecerdasan ${pData.name.replace("Kecerdasan ", "")}`}
               </h4>
               <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
                 {pData.description}

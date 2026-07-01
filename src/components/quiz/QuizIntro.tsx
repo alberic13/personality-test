@@ -5,6 +5,7 @@ import { MessageSquare, Calculator, Compass, Activity, Music, Users, User, Leaf,
 import { Dimension } from "../../types/quiz";
 import { intelligences } from "../../data/intelligences";
 import { riasecTypes } from "../../data/riasec";
+import { gayaBelajarTypes } from "../../data/gaya_belajar";
 import gsap from "gsap";
 import TextType from "../ui/TextType";
 import MagicBento, { BentoItem } from "../ui/MagicBento";
@@ -19,7 +20,7 @@ function cn(...classes: (string | boolean | undefined)[]) {
 interface QuizIntroProps {
   onStart: () => void;
   onSimulate: () => void;
-  testType?: "majemuk" | "riasec";
+  testType?: "majemuk" | "riasec" | "gaya-belajar";
   onBack?: () => void;
 }
 
@@ -129,6 +130,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
   const overlayRef = useRef<HTMLDivElement>(null);
 
   const isRiasec = testType === "riasec";
+  const isGayaBelajar = testType === "gaya-belajar";
 
   const bentoItems: BentoItem[] = [
     {
@@ -142,7 +144,11 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
     {
       color: '#ffffff',
       title: 'Jumlah Pertanyaan',
-      description: isRiasec ? '42 pertanyaan pilihan ganda skala Likert.' : '80 pertanyaan pilihan ganda skala Likert.',
+      description: isRiasec 
+        ? '42 pertanyaan pilihan ganda skala Likert.' 
+        : isGayaBelajar 
+          ? '27 pertanyaan pilihan ganda skala Likert.' 
+          : '80 pertanyaan pilihan ganda skala Likert.',
       label: 'Pertanyaan',
       icon: <ClipboardList className="w-5 h-5 text-blue-600" />,
       bgIcon: 'p-2 bg-blue-50 text-blue-600 rounded-xl shrink-0',
@@ -158,7 +164,9 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
     {
       color: '#ffffff',
       title: 'Autentisitas Jawaban',
-      description: 'Isilah sejujur mungkin sesuai dengan kepribadian Anda untuk mendapatkan rekomendasi jurusan kuliah dan karir yang akurat.',
+      description: isGayaBelajar
+        ? 'Isilah sejujur mungkin sesuai dengan preferensi belajar Anda untuk mendapatkan rekomendasi jurusan kuliah dan karir yang akurat.'
+        : 'Isilah sejujur mungkin sesuai dengan kepribadian Anda untuk mendapatkan rekomendasi jurusan kuliah dan karir yang akurat.',
       label: 'Validitas Hasil',
       icon: <ShieldCheck className="w-5 h-5 text-emerald-600" />,
       bgIcon: 'p-2 bg-emerald-50 text-emerald-600 rounded-xl shrink-0',
@@ -215,21 +223,25 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
 
   // List of classrooms (aspekt)
   const classrooms = isRiasec ? [
-    { dimension: "realistic" as Dimension, code: "", name: "Realistic (Realistik)", description: "Minat pada aktivitas fisik, praktis, mesin, alat, & tanaman.", icon: <Wrench className="w-5 h-5 text-slate-650" />, bgIcon: "bg-slate-50" },
-    { dimension: "investigative" as Dimension, code: "", name: "Investigative (Investigatif)", description: "Minat pada pemecahan masalah ilmiah, analisis, & riset.", icon: <Search className="w-5 h-5 text-blue-650" />, bgIcon: "bg-blue-50" },
-    { dimension: "artistic" as Dimension, code: "", name: "Artistic (Artistik)", description: "Minat pada ekspresi kreatif, seni, musik, & orisinalitas.", icon: <Palette className="w-5 h-5 text-pink-650" />, bgIcon: "bg-pink-50" },
-    { dimension: "social" as Dimension, code: "", name: "Social (Sosial)", description: "Minat pada membantu, mengajar, & melayani orang lain.", icon: <Heart className="w-5 h-5 text-rose-650" />, bgIcon: "bg-rose-50" },
-    { dimension: "enterprising" as Dimension, code: "", name: "Enterprising (Giat)", description: "Minat pada memimpin, memengaruhi, bisnis, & wirausaha.", icon: <TrendingUp className="w-5 h-5 text-amber-650" />, bgIcon: "bg-amber-50" },
-    { dimension: "conventional" as Dimension, code: "", name: "Conventional (Konvensional)", description: "Minat pada keteraturan, administrasi, data, & detail.", icon: <FileText className="w-5 h-5 text-emerald-650" />, bgIcon: "bg-emerald-50" }
+    { dimension: "realistic" as Dimension, code: "", name: "Realistic (Realistik)", description: "Minat pada aktivitas fisik, praktis, mesin, alat, & tanaman.", icon: <Wrench className="w-5 h-5 text-slate-655" />, bgIcon: "bg-slate-50" },
+    { dimension: "investigative" as Dimension, code: "", name: "Investigative (Investigatif)", description: "Minat pada pemecahan masalah ilmiah, analisis, & riset.", icon: <Search className="w-5 h-5 text-blue-655" />, bgIcon: "bg-blue-50" },
+    { dimension: "artistic" as Dimension, code: "", name: "Artistic (Artistik)", description: "Minat pada ekspresi kreatif, seni, musik, & orisinalitas.", icon: <Palette className="w-5 h-5 text-pink-655" />, bgIcon: "bg-pink-50" },
+    { dimension: "social" as Dimension, code: "", name: "Social (Sosial)", description: "Minat pada membantu, mengajar, & melayani orang lain.", icon: <Heart className="w-5 h-5 text-rose-655" />, bgIcon: "bg-rose-50" },
+    { dimension: "enterprising" as Dimension, code: "", name: "Enterprising (Giat)", description: "Minat pada memimpin, memengaruhi, bisnis, & wirausaha.", icon: <TrendingUp className="w-5 h-5 text-amber-655" />, bgIcon: "bg-amber-50" },
+    { dimension: "conventional" as Dimension, code: "", name: "Conventional (Konvensional)", description: "Minat pada keteraturan, administrasi, data, & detail.", icon: <FileText className="w-5 h-5 text-emerald-655" />, bgIcon: "bg-emerald-50" }
+  ] : isGayaBelajar ? [
+    { dimension: "gaya_visual" as Dimension, code: "", name: "Visual (Gaya Belajar Visual)", description: "Belajar dengan melihat gambar, diagram, poster, dan teks tertulis.", icon: <Palette className="w-5 h-5 text-indigo-650" />, bgIcon: "bg-indigo-50" },
+    { dimension: "gaya_auditori" as Dimension, code: "", name: "Auditori (Gaya Belajar Auditori)", description: "Belajar dengan mendengarkan penjelasan lisan, diskusi, dan rekaman audio.", icon: <MessageSquare className="w-5 h-5 text-purple-650" />, bgIcon: "bg-purple-50" },
+    { dimension: "gaya_kinestetik" as Dimension, code: "", name: "Kinestetik (Gaya Belajar Kinestetik)", description: "Belajar dengan mempraktikkan langsung, olahraga, kriya tangan, dan aktivitas fisik.", icon: <Activity className="w-5 h-5 text-orange-650" />, bgIcon: "bg-orange-50" }
   ] : [
-    { dimension: "linguistik" as Dimension, code: "", name: "Kecerdasan Bahasa (Linguistik)", description: "Mengasah menulis, sastra, & tata bahasa.", icon: <MessageSquare className="w-5 h-5 text-purple-650" />, bgIcon: "bg-purple-50" },
-    { dimension: "matematis" as Dimension, code: "", name: "Kecerdasan Logika & Matematika", description: "Menguji angka, penalaran, & analisis.", icon: <Calculator className="w-5 h-5 text-blue-650" />, bgIcon: "bg-blue-50" },
-    { dimension: "spasial" as Dimension, code: "", name: "Kecerdasan Visual & Spasial", description: "Sketsa visual 3D, kreativitas, & ruang.", icon: <Compass className="w-5 h-5 text-amber-650" />, bgIcon: "bg-amber-50" },
-    { dimension: "kinestetik" as Dimension, code: "", name: "Kecerdasan Kinestetik & Jasmani", description: "Ketangkasan fisik, koordinasi, & gerak.", icon: <Activity className="w-5 h-5 text-orange-650" />, bgIcon: "bg-orange-50" },
-    { dimension: "musikal" as Dimension, code: "", name: "Kecerdasan Musik & Harmoni", description: "Melodi, irama nada, & harmoni instrumen.", icon: <Music className="w-5 h-5 text-pink-650" />, bgIcon: "bg-pink-50" },
-    { dimension: "interpersonal" as Dimension, code: "", name: "Kecerdasan Interpersonal (Sosial)", description: "Kolaborasi tim, empati, & komunikasi.", icon: <Users className="w-5 h-5 text-teal-650" />, bgIcon: "bg-teal-50" },
-    { dimension: "intrapersonal" as Dimension, code: "", name: "Kecerdasan Intrapersonal (Diri)", description: "Refleksi karakter, mental, & emosi diri.", icon: <User className="w-5 h-5 text-indigo-650" />, bgIcon: "bg-indigo-50" },
-    { dimension: "naturalis" as Dimension, code: "", name: "Kecerdasan Naturalis (Alam)", description: "Ekosistem alam, ekologi, & flora-fauna.", icon: <Leaf className="w-5 h-5 text-emerald-650" />, bgIcon: "bg-emerald-50" }
+    { dimension: "linguistik" as Dimension, code: "", name: "Kecerdasan Bahasa (Linguistik)", description: "Mengasah menulis, sastra, & tata bahasa.", icon: <MessageSquare className="w-5 h-5 text-purple-655" />, bgIcon: "bg-purple-50" },
+    { dimension: "matematis" as Dimension, code: "", name: "Kecerdasan Logika & Matematika", description: "Menguji angka, penalaran, & analisis.", icon: <Calculator className="w-5 h-5 text-blue-655" />, bgIcon: "bg-blue-50" },
+    { dimension: "spasial" as Dimension, code: "", name: "Kecerdasan Visual & Spasial", description: "Sketsa visual 3D, kreativitas, & ruang.", icon: <Compass className="w-5 h-5 text-amber-655" />, bgIcon: "bg-amber-50" },
+    { dimension: "kinestetik" as Dimension, code: "", name: "Kecerdasan Kinestetik & Jasmani", description: "Ketangkasan fisik, koordinasi, & gerak.", icon: <Activity className="w-5 h-5 text-orange-655" />, bgIcon: "bg-orange-50" },
+    { dimension: "musikal" as Dimension, code: "", name: "Kecerdasan Musik & Harmoni", description: "Melodi, irama nada, & harmoni instrumen.", icon: <Music className="w-5 h-5 text-pink-655" />, bgIcon: "bg-pink-50" },
+    { dimension: "interpersonal" as Dimension, code: "", name: "Kecerdasan Interpersonal (Sosial)", description: "Kolaborasi tim, empati, & komunikasi.", icon: <Users className="w-5 h-5 text-teal-655" />, bgIcon: "bg-teal-50" },
+    { dimension: "intrapersonal" as Dimension, code: "", name: "Kecerdasan Intrapersonal (Diri)", description: "Refleksi karakter, mental, & emosi diri.", icon: <User className="w-5 h-5 text-indigo-655" />, bgIcon: "bg-indigo-50" },
+    { dimension: "naturalis" as Dimension, code: "", name: "Kecerdasan Naturalis (Alam)", description: "Ekosistem alam, ekologi, & flora-fauna.", icon: <Leaf className="w-5 h-5 text-emerald-655" />, bgIcon: "bg-emerald-50" }
   ];
 
   const initialAspects = classrooms.map((c, i) => ({
@@ -309,7 +321,9 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
             text={
               isRiasec 
                 ? ["Kepribadian RIASEC", "Potensi Karir & Minat", "Rekomendasi Jurusan & Profesi"]
-                : ["Kecerdasan Majemuk", "Potensi Minat & Bakat", "Rekomendasi Jurusan & Karir"]
+                : isGayaBelajar
+                  ? ["Gaya Belajar VAK", "Metode Belajar Efektif", "Rekomendasi Jurusan & Karir"]
+                  : ["Kecerdasan Majemuk", "Potensi Minat & Bakat", "Rekomendasi Jurusan & Karir"]
             }
             as="span"
             className="font-serif italic font-normal text-indigo-600 inline-block"
@@ -324,7 +338,9 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
         <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
           {isRiasec 
             ? "Temukan potensi dominan Anda berdasarkan Tipe Kepribadian & Minat Kerja RIASEC untuk kecocokan jurusan kuliah dan profesi masa depan Anda."
-            : "Temukan potensi dominan Anda berdasarkan Teori Kecerdasan Majemuk (Multiple Intelligences) untuk kecocokan jurusan kuliah dan profesi masa depan Anda."}
+            : isGayaBelajar
+              ? "Temukan preferensi belajar terbaik Anda (Visual, Auditori, atau Kinestetik) untuk membantu Anda menyerap ilmu dengan lebih cepat dan menyenangkan."
+              : "Temukan potensi dominan Anda berdasarkan Teori Kecerdasan Majemuk (Multiple Intelligences) untuk kecocokan jurusan kuliah dan profesi masa depan Anda."}
         </p>
       </div>
 
@@ -365,7 +381,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
       {/* Areas Stagger Deck */}
       <div className="flex flex-col gap-6 relative">
         <h3 className="text-xl font-extrabold text-slate-900 text-center">
-          Aspek <span className="font-serif italic font-normal text-indigo-600">{isRiasec ? "Kepribadian RIASEC" : "Kecerdasan Majemuk"}</span>
+          Aspek <span className="font-serif italic font-normal text-indigo-600">{isRiasec ? "Kepribadian RIASEC" : isGayaBelajar ? "Gaya Belajar" : "Kecerdasan Majemuk"}</span>
         </h3>
         
         <motion.div
@@ -429,10 +445,14 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
               </div>
               <div className="flex flex-col gap-0.5">
                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                  {isRiasec ? "Aspek Kepribadian" : "Aspek Kecerdasan"}
+                  {isRiasec ? "Aspek Kepribadian" : isGayaBelajar ? "Gaya Belajar" : "Aspek Kecerdasan"}
                 </span>
                 <h3 className="text-lg font-black text-slate-900 leading-tight">
-                  {isRiasec ? riasecTypes[selectedRoom]?.name : intelligences[selectedRoom]?.name}
+                  {isRiasec 
+                    ? riasecTypes[selectedRoom]?.name 
+                    : isGayaBelajar 
+                      ? gayaBelajarTypes[selectedRoom]?.name 
+                      : intelligences[selectedRoom]?.name}
                 </h3>
               </div>
             </div>
@@ -442,14 +462,22 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                 <h5 className="font-extrabold text-slate-800 text-xs uppercase tracking-wide mb-1.5">Deskripsi:</h5>
                 <p className="leading-relaxed text-xs sm:text-sm">
-                  {isRiasec ? riasecTypes[selectedRoom]?.description : intelligences[selectedRoom]?.description}
+                  {isRiasec 
+                    ? riasecTypes[selectedRoom]?.description 
+                    : isGayaBelajar 
+                      ? gayaBelajarTypes[selectedRoom]?.description 
+                      : intelligences[selectedRoom]?.description}
                 </p>
               </div>
 
               <div>
                 <h5 className="font-extrabold text-slate-800 text-xs uppercase tracking-wide mb-2">Saran Jurusan Kuliah:</h5>
                 <div className="flex flex-wrap gap-1.5">
-                  {(isRiasec ? riasecTypes[selectedRoom]?.majors : intelligences[selectedRoom]?.majors)?.map((major, i) => (
+                  {(isRiasec 
+                    ? riasecTypes[selectedRoom]?.majors 
+                    : isGayaBelajar 
+                      ? gayaBelajarTypes[selectedRoom]?.majors 
+                      : intelligences[selectedRoom]?.majors)?.map((major, i) => (
                     <span key={i} className="px-3 py-1.5 rounded-full bg-indigo-50/50 text-indigo-750 text-[11px] font-bold border border-indigo-100/50">
                       🎓 {major}
                     </span>
@@ -460,7 +488,11 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
               <div>
                 <h5 className="font-extrabold text-slate-800 text-xs uppercase tracking-wide mb-2">Profesi & Karir yang Cocok:</h5>
                 <div className="flex flex-wrap gap-1.5">
-                  {(isRiasec ? riasecTypes[selectedRoom]?.careers : intelligences[selectedRoom]?.careers)?.map((career, i) => (
+                  {(isRiasec 
+                    ? riasecTypes[selectedRoom]?.careers 
+                    : isGayaBelajar 
+                      ? gayaBelajarTypes[selectedRoom]?.careers 
+                      : intelligences[selectedRoom]?.careers)?.map((career, i) => (
                     <span key={i} className="px-3 py-1.5 rounded-full bg-slate-100 text-slate-800 text-[11px] font-bold border border-slate-200/50">
                       💼 {career}
                     </span>

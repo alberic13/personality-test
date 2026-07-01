@@ -43,3 +43,6 @@ next-env.d.ts
 # agent helper files
 AGENTS.md
 CLAUDE.md
+
+# Data files
+*.xlsx

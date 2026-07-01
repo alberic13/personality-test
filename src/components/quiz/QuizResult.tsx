@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { QuizResult as QuizResultType, Dimension } from "../../types/quiz";
 import { intelligences } from "../../data/intelligences";
+import { riasecTypes } from "../../data/riasec";
 import { getIntelligenceScoresList } from "../../lib/quiz-engine";
 import { Card } from "../ui/Card";
 import { Button } from "../ui/Button";
@@ -18,27 +19,33 @@ export const QuizResult: React.FC<QuizResultProps> = ({
   onRetake,
   onGoHome,
 }) => {
+  const testType = result.testType || "majemuk";
+  const isRiasec = testType === "riasec";
+  const activeData = isRiasec ? riasecTypes : intelligences;
+
   const scoresList = getIntelligenceScoresList(result);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const dimensionsOrder: Dimension[] = [
-    "linguistik",
-    "matematis",
-    "spasial",
-    "kinestetik",
-    "musikal",
-    "interpersonal",
-    "intrapersonal",
-    "naturalis",
-  ];
+  const dimensionsOrder: Dimension[] = isRiasec
+    ? ["realistic", "investigative", "artistic", "social", "enterprising", "conventional"]
+    : [
+        "linguistik",
+        "matematis",
+        "spasial",
+        "kinestetik",
+        "musikal",
+        "interpersonal",
+        "intrapersonal",
+        "naturalis",
+      ];
 
   const orderedScores = dimensionsOrder.map((dim) => {
     return scoresList.find((s) => s.dimension === dim)!;
   });
   
-  // State untuk memilih kecerdasan dominan mana yang sedang ditampilkan detailnya
+  // State untuk memilih kecerdasan/kepribadian dominan mana yang sedang ditampilkan detailnya
   const [selectedDominant, setSelectedDominant] = useState<Dimension>(
-    result.dominantTypes[0] || "linguistik"
+    result.dominantTypes[0] || (isRiasec ? "realistic" : "linguistik")
   );
 
   const isUndefinedResult = result.answers.length <= 1;
@@ -50,7 +57,7 @@ export const QuizResult: React.FC<QuizResultProps> = ({
         majors: ["undefined"],
         careers: ["undefined"],
       }
-    : intelligences[selectedDominant];
+    : activeData[selectedDominant];
 
   // GSAP enter animations on mount (using gsap.from to avoid permanent hidden states)
   useEffect(() => {
@@ -97,20 +104,38 @@ export const QuizResult: React.FC<QuizResultProps> = ({
     );
   }, []);
 
+  // Set dynamic document title for printing
+  useEffect(() => {
+    const originalTitle = document.title;
+    const testName = isRiasec ? "Kepribadian RIASEC" : "Kecerdasan Majemuk";
+    const userName = result.name || "";
+
+    if (userName) {
+      document.title = `${testName} | ${userName}`;
+    } else {
+      document.title = testName;
+    }
+
+    return () => {
+      document.title = originalTitle;
+    };
+  }, [result, isRiasec]);
+
   if (!pData) {
     return (
       <div className="text-center p-8 text-slate-900">
         <AlertCircle className="mx-auto w-12 h-12 text-rose-500 mb-4" />
         <h2 className="text-xl font-bold">Terjadi Kesalahan</h2>
-        <p className="text-slate-500">Data kecerdasan tidak ditemukan.</p>
+        <p className="text-slate-500">Data hasil tes tidak ditemukan.</p>
         <Button className="mt-4" onClick={onGoHome}>Kembali</Button>
       </div>
     );
   }
 
-  // Tentukan warna berdasarkan tipe kecerdasan untuk kecerdasan dominan utama
+  // Tentukan warna berdasarkan tipe kecerdasan/kepribadian
   const getThemeColors = (type: Dimension) => {
     switch (type) {
+      // Majemuk
       case "linguistik":
         return {
           bg: "from-purple-500/8 via-indigo-500/2 to-transparent",
@@ -136,7 +161,7 @@ export const QuizResult: React.FC<QuizResultProps> = ({
         return {
           bg: "from-orange-500/8 via-rose-500/2 to-transparent",
           border: "border-orange-100",
-          badgeBg: "bg-orange-50 text-orange-850 border-orange-100",
+          badgeBg: "bg-orange-50 text-orange-855 border-orange-100",
           gradientText: "from-orange-700 to-rose-700",
         };
       case "musikal":
@@ -167,6 +192,49 @@ export const QuizResult: React.FC<QuizResultProps> = ({
           badgeBg: "bg-emerald-50 text-emerald-800 border-emerald-100",
           gradientText: "from-emerald-700 to-green-700",
         };
+      // RIASEC
+      case "realistic":
+        return {
+          bg: "from-slate-500/8 via-slate-400/2 to-transparent",
+          border: "border-slate-100",
+          badgeBg: "bg-slate-100 text-slate-700 border-slate-200",
+          gradientText: "from-slate-700 to-slate-800",
+        };
+      case "investigative":
+        return {
+          bg: "from-blue-500/8 via-sky-500/2 to-transparent",
+          border: "border-blue-100",
+          badgeBg: "bg-blue-50 text-blue-700 border-blue-100",
+          gradientText: "from-blue-700 to-sky-700",
+        };
+      case "artistic":
+        return {
+          bg: "from-pink-500/8 via-rose-500/2 to-transparent",
+          border: "border-pink-100",
+          badgeBg: "bg-pink-50 text-pink-700 border-pink-100",
+          gradientText: "from-pink-700 to-rose-700",
+        };
+      case "social":
+        return {
+          bg: "from-rose-500/8 via-red-500/2 to-transparent",
+          border: "border-rose-100",
+          badgeBg: "bg-rose-50 text-rose-700 border-rose-100",
+          gradientText: "from-rose-700 to-red-700",
+        };
+      case "enterprising":
+        return {
+          bg: "from-amber-500/8 via-orange-500/2 to-transparent",
+          border: "border-amber-100",
+          badgeBg: "bg-amber-50 text-amber-800 border-amber-100",
+          gradientText: "from-amber-700 to-orange-700",
+        };
+      case "conventional":
+        return {
+          bg: "from-emerald-500/8 via-green-500/2 to-transparent",
+          border: "border-emerald-100",
+          badgeBg: "bg-emerald-50 text-emerald-800 border-emerald-100",
+          gradientText: "from-emerald-700 to-green-700",
+        };
       default:
         return {
           bg: "from-slate-500/8 via-slate-400/2 to-transparent",
@@ -184,9 +252,30 @@ export const QuizResult: React.FC<QuizResultProps> = ({
   const cx = 200;
   const cy = 180;
   const maxRadius = 110;
+  
+  const numPoints = orderedScores.length;
+  const maxScore = isRiasec ? 35 : 50;
 
   return (
     <div ref={containerRef} className="max-w-6xl mx-auto flex flex-col gap-8 text-slate-900">
+      
+      {/* Dynamic Header for Printable Report */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-200 gap-2">
+        <div>
+          <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">
+            {isRiasec ? "Laporan Evaluasi Kepribadian" : "Laporan Evaluasi Kecerdasan"}
+          </span>
+          <h2 className="text-2xl font-black text-slate-900 leading-tight">
+            {isRiasec ? "Tes Kepribadian RIASEC" : "Tes Kecerdasan Majemuk"}
+          </h2>
+        </div>
+        {result.name && (
+          <div className="text-left sm:text-right">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nama Peserta</span>
+            <p className="text-base font-bold text-slate-900">{result.name}</p>
+          </div>
+        )}
+      </div>
       
       {/* Hero Card - Crystalknows Style */}
       <div className={`gsap-fade-in relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br ${activeTheme.bg} p-8 sm:p-10 flex flex-col sm:flex-row items-center sm:items-start gap-8 shadow-md`}>
@@ -195,21 +284,30 @@ export const QuizResult: React.FC<QuizResultProps> = ({
         </div>
         <div className="flex flex-col gap-3 text-center sm:text-left w-full">
           <span className="w-fit mx-auto sm:mx-0 px-3.5 py-1 rounded-full text-[10px] font-black tracking-widest bg-slate-900 text-white uppercase shadow-sm">
-            Kecerdasan Dominan
+            {isRiasec ? "Kepribadian Dominan" : "Kecerdasan Dominan"}
           </span>
           
           {isMultipleDominant ? (
             <div className="flex flex-col gap-3">
               <h1 className="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
-                Profil Kecerdasan Majemuk Anda
+                {isRiasec ? "Profil Kepribadian RIASEC Anda" : "Profil Kecerdasan Majemuk Anda"}
               </h1>
               <p className="text-sm text-slate-500 -mt-1 leading-relaxed">
-                Anda memiliki beberapa area kecerdasan yang menonjol secara seimbang:
+                {isRiasec 
+                  ? "Anda memiliki beberapa tipe minat/kepribadian yang menonjol secara seimbang:"
+                  : "Anda memiliki beberapa area kecerdasan yang menonjol secara seimbang:"}
               </p>
-              {/* Render dominant types as clean, beautifully wrapped badges to avoid clutter */}
+              {/* Render dominant types as badges */}
               <div className="flex flex-wrap justify-center sm:justify-start gap-2.5 mt-1">
                 {result.dominantTypes.map((type) => {
-                  const intName = intelligences[type]?.name.replace("Kecerdasan ", "");
+                  const intName = activeData[type]?.name
+                    .replace("Kecerdasan ", "")
+                    .replace(" (Realistik)", "")
+                    .replace(" (Investigatif)", "")
+                    .replace(" (Artistik)", "")
+                    .replace(" (Sosial)", "")
+                    .replace(" (Giat / Enterprising)", "")
+                    .replace(" (Konvensional)", "");
                   const badgeColors = getThemeColors(type);
                   return (
                     <span 
@@ -230,7 +328,7 @@ export const QuizResult: React.FC<QuizResultProps> = ({
           ) : (
             <div>
               <h1 className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight">
-                {isUndefinedResult ? "undefined" : `Kecerdasan ${intelligences[result.dominantTypes[0]]?.name.replace("Kecerdasan ", "")}`}
+                {isUndefinedResult ? "undefined" : (isRiasec ? `Kepribadian ${activeData[result.dominantTypes[0]]?.name}` : `Kecerdasan ${activeData[result.dominantTypes[0]]?.name.replace("Kecerdasan ", "")}`)}
               </h1>
               <p className="text-sm sm:text-base text-slate-500 mt-1">
                 {isUndefinedResult ? "undefined" : "Karakteristik berpikir Anda paling menonjol pada aspek ini."}
@@ -243,7 +341,7 @@ export const QuizResult: React.FC<QuizResultProps> = ({
       {/* Main Grid: Grafik vs Detail */}
       <div className="grid lg:grid-cols-5 gap-8">
         
-        {/* Kolom Kiri (2/5): Diagram Radar Kecerdasan */}
+        {/* Kolom Kiri (2/5): Diagram Radar */}
         <div className="gsap-fade-in lg:col-span-2 flex flex-col h-fit">
           <h3 className="text-slate-950 font-black tracking-wider text-xs uppercase mb-3 px-1">
             DIAGRAM SKORING TES
@@ -264,7 +362,7 @@ export const QuizResult: React.FC<QuizResultProps> = ({
                 {[0.2, 0.4, 0.6, 0.8, 1].map((scale, gridIdx) => {
                   const r = maxRadius * scale;
                   const pointsStr = orderedScores.map((_, i) => {
-                    const angle = (Math.PI * 2 * i) / 8 - Math.PI / 2;
+                    const angle = (Math.PI * 2 * i) / numPoints - Math.PI / 2;
                     const x = cx + r * Math.cos(angle);
                     const y = cy + r * Math.sin(angle);
                     return `${x},${y}`;
@@ -283,7 +381,7 @@ export const QuizResult: React.FC<QuizResultProps> = ({
 
                 {/* Axis Web lines */}
                 {orderedScores.map((_, i) => {
-                  const angle = (Math.PI * 2 * i) / 8 - Math.PI / 2;
+                  const angle = (Math.PI * 2 * i) / numPoints - Math.PI / 2;
                   const x = cx + maxRadius * Math.cos(angle);
                   const y = cy + maxRadius * Math.sin(angle);
                   return (
@@ -302,8 +400,8 @@ export const QuizResult: React.FC<QuizResultProps> = ({
                 {/* User Score Area (Filled Polygon) */}
                 <polygon
                   points={orderedScores.map((scoreItem, i) => {
-                    const angle = (Math.PI * 2 * i) / 8 - Math.PI / 2;
-                    const r = (scoreItem.score / 50) * maxRadius;
+                    const angle = (Math.PI * 2 * i) / numPoints - Math.PI / 2;
+                    const r = (scoreItem.score / maxScore) * maxRadius;
                     const x = cx + r * Math.cos(angle);
                     const y = cy + r * Math.sin(angle);
                     return `${x},${y}`;
@@ -316,8 +414,8 @@ export const QuizResult: React.FC<QuizResultProps> = ({
 
                 {/* Score Vertices (Circles) */}
                 {orderedScores.map((scoreItem, i) => {
-                  const angle = (Math.PI * 2 * i) / 8 - Math.PI / 2;
-                  const r = (scoreItem.score / 50) * maxRadius;
+                  const angle = (Math.PI * 2 * i) / numPoints - Math.PI / 2;
+                  const r = (scoreItem.score / maxScore) * maxRadius;
                   const x = cx + r * Math.cos(angle);
                   const y = cy + r * Math.sin(angle);
                   const isDominant = result.dominantTypes.includes(scoreItem.dimension);
@@ -339,7 +437,7 @@ export const QuizResult: React.FC<QuizResultProps> = ({
 
                 {/* Text Labels */}
                 {orderedScores.map((scoreItem, i) => {
-                  const angle = (Math.PI * 2 * i) / 8 - Math.PI / 2;
+                  const angle = (Math.PI * 2 * i) / numPoints - Math.PI / 2;
                   const r = maxRadius + 18;
                   const x = cx + r * Math.cos(angle);
                   const y = cy + r * Math.sin(angle);
@@ -363,6 +461,12 @@ export const QuizResult: React.FC<QuizResultProps> = ({
                     interpersonal: "Interpersonal",
                     intrapersonal: "Intrapersonal",
                     naturalis: "Naturalis",
+                    realistic: "Realistic",
+                    investigative: "Investigative",
+                    artistic: "Artistic",
+                    social: "Social",
+                    enterprising: "Enterprising",
+                    conventional: "Conventional",
                   };
                   const label = shortNames[scoreItem.dimension];
                   const isDominant = result.dominantTypes.includes(scoreItem.dimension);
@@ -391,7 +495,7 @@ export const QuizResult: React.FC<QuizResultProps> = ({
 
         {/* Kolom Kanan (3/5): Detail Aspek Dominan (Stacked Sections - Crystalknows Style) */}
         <div className="gsap-fade-in lg:col-span-3 flex flex-col gap-6">
-          {/* Pemilih Kecerdasan Dominan (jika ada lebih dari 1) */}
+          {/* Pemilih Aspek Dominan (jika ada lebih dari 1) */}
           {isMultipleDominant && (
             <div className="flex flex-col gap-2 bg-white border border-slate-100 rounded-3xl p-5 shadow-md shadow-slate-100/30">
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">
@@ -400,7 +504,14 @@ export const QuizResult: React.FC<QuizResultProps> = ({
               <div className="flex flex-wrap gap-2">
                 {result.dominantTypes.map((type) => {
                   const isActive = selectedDominant === type;
-                  const intName = intelligences[type]?.name.replace("Kecerdasan ", "");
+                  const intName = activeData[type]?.name
+                    .replace("Kecerdasan ", "")
+                    .replace(" (Realistik)", "")
+                    .replace(" (Investigatif)", "")
+                    .replace(" (Artistik)", "")
+                    .replace(" (Sosial)", "")
+                    .replace(" (Giat / Enterprising)", "")
+                    .replace(" (Konvensional)", "");
                   const tabTheme = getThemeColors(type);
                   return (
                     <button
@@ -426,7 +537,7 @@ export const QuizResult: React.FC<QuizResultProps> = ({
             <div className="flex flex-col gap-3 pb-8 border-b border-slate-100">
               <h4 className={`text-lg sm:text-xl font-extrabold flex items-center gap-2 text-slate-900`}>
                 <Star className="w-5.5 h-5.5 text-blue-600 fill-blue-600/10" />
-                Penjelasan Kecerdasan {isUndefinedResult ? "undefined" : pData.name.replace("Kecerdasan ", "")}
+                {isRiasec ? `Penjelasan Tipe ${pData.name}` : `Penjelasan Kecerdasan ${pData.name.replace("Kecerdasan ", "")}`}
               </h4>
               <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
                 {pData.description}
@@ -494,6 +605,10 @@ export const QuizResult: React.FC<QuizResultProps> = ({
             </div>
           </Card>
         </div>
+      </div>
+      {/* Print-only Footer */}
+      <div className="hidden print:block text-center mt-12 pt-4 border-t border-slate-200 text-xs text-slate-400">
+        © 2026 Test Personal | Zalde.
       </div>
     </div>
   );

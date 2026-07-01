@@ -2,15 +2,20 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { Answer, QuizResult as QuizResultType } from "../types/quiz";
-import { questions } from "../data/questions";
+import { questions as multipleIntelligenceQuestions } from "../data/questions";
+import { riasecQuestions } from "../data/riasec_questions";
 import { calculateQuizResult, getIntelligenceScoresList } from "../lib/quiz-engine";
 import { LeadModal } from "../components/quiz/LeadModal";
 import { QuizIntro } from "../components/quiz/QuizIntro";
 import { QuizCard } from "../components/quiz/QuizCard";
 import { QuizResult } from "../components/quiz/QuizResult";
+import { Brain, Star } from "lucide-react";
+import RotatingText from "../components/ui/RotatingText";
+import DecayCard from "../components/ui/DecayCard";
 
 export default function Home() {
-  const [viewState, setViewState] = useState<"welcome" | "intro" | "quiz" | "result">("intro");
+  const [testType, setTestType] = useState<"majemuk" | "riasec">("majemuk");
+  const [viewState, setViewState] = useState<"select-test" | "intro" | "quiz" | "result">("select-test");
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [currentResult, setCurrentResult] = useState<QuizResultType | null>(null);
@@ -23,6 +28,8 @@ export default function Home() {
   // States untuk Timer Mundur 15 Menit (900 detik)
   const [timeLeft, setTimeLeft] = useState<number>(900);
   const [isTimeOut, setIsTimeOut] = useState(false);
+
+  const activeQuestions = testType === "riasec" ? riasecQuestions : multipleIntelligenceQuestions;
 
   // Handler submit otomatis saat waktu habis
   const handleAutoSubmit = useCallback(() => {
@@ -77,20 +84,20 @@ export default function Home() {
   };
 
   const handleNext = () => {
-    if (currentIndex < questions.length - 1) {
+    if (currentIndex < activeQuestions.length - 1) {
       setCurrentIndex(currentIndex + 1);
     }
   };
 
   const handleSubmitQuiz = () => {
-    if (answers.length < questions.length) return;
+    if (answers.length < activeQuestions.length) return;
     setPendingAnswers(answers);
     setIsTimeOut(false);
     setIsLeadModalOpen(true);
   };
 
   const handleSimulateQuiz = () => {
-    const mockAnswers = questions.map((q) => {
+    const mockAnswers = activeQuestions.map((q) => {
       const randomScore = Math.floor(Math.random() * 5) + 1;
       return { questionId: q.id, score: randomScore };
     });
@@ -103,7 +110,9 @@ export default function Home() {
     if (!pendingAnswers) return;
 
     setIsSubmittingLead(true);
-    const result = calculateQuizResult(pendingAnswers);
+    const result = calculateQuizResult(pendingAnswers, testType);
+    result.name = name;
+    result.email = email;
 
     // Hitung raw scores per kategori
     const scoresList = getIntelligenceScoresList(result);
@@ -125,6 +134,7 @@ export default function Home() {
           scores: scoresMap,
           dominant: result.dominantTypes,
           date: result.date,
+          testType,
         }),
       });
     } catch (error) {
@@ -139,14 +149,12 @@ export default function Home() {
     }
   };
 
-
-
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900 transition-colors duration-300 relative overflow-x-hidden">
-      {/* Ambient Blue Glow & Blur Background */}
-      <div className="absolute top-[-10%] left-[-15%] w-[60vw] h-[60vw] bg-blue-300/25 rounded-full blur-[120px] pointer-events-none -z-10" />
-      <div className="absolute bottom-[-10%] right-[-15%] w-[60vw] h-[60vw] bg-sky-300/20 rounded-full blur-[140px] pointer-events-none -z-10" />
-      <div className="absolute top-[35%] left-[20%] w-[50vw] h-[50vw] bg-indigo-300/15 rounded-full blur-[130px] pointer-events-none -z-10" />
+    <div className="flex flex-col min-h-screen bg-[#fafafc] bg-grid-dots text-slate-900 transition-colors duration-300 relative overflow-x-hidden">
+      {/* Ambient Glowing Blobs & Blur Background */}
+      <div className="absolute top-[-10%] left-[-15%] w-[60vw] h-[60vw] bg-violet-400/12 rounded-full blur-[130px] pointer-events-none -z-10" />
+      <div className="absolute bottom-[-10%] right-[-15%] w-[60vw] h-[60vw] bg-indigo-400/10 rounded-full blur-[140px] pointer-events-none -z-10" />
+      <div className="absolute top-[35%] left-[20%] w-[50vw] h-[50vw] bg-teal-300/8 rounded-full blur-[120px] pointer-events-none -z-10" />
 
       {/* Header / Navigation Bar */}
       <header className="sticky top-0 z-40 bg-white/70 backdrop-blur-md border-b border-zinc-100 transition-colors duration-300">
@@ -154,7 +162,7 @@ export default function Home() {
           {/* Logo */}
           <div
             className="flex items-center gap-2 font-black text-lg sm:text-xl tracking-tight cursor-pointer select-none"
-            onClick={() => setViewState("intro")}
+            onClick={() => setViewState("select-test")}
           >
             <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 font-black text-base italic tracking-tighter">
               Z
@@ -167,18 +175,112 @@ export default function Home() {
       </header>
 
       {/* Main Content Area */}
-      <main className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col">
+      <main className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col flex-grow">
+        {viewState === "select-test" && (
+          <div className="max-w-4xl mx-auto py-10 px-4 flex flex-col gap-10 items-center justify-center min-h-[70vh]">
+            <div className="text-center flex flex-col gap-4 max-w-2xl">
+              <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 leading-tight md:leading-none flex flex-wrap items-center justify-center gap-x-3">
+                Pilih{" "}
+                <RotatingText
+                  texts={["Tes Evaluasi Diri", "Kecerdasan Majemuk", "Kepribadian RIASEC", "Arah Karir Anda"]}
+                  mainClassName="font-serif italic font-normal text-indigo-600 inline-flex overflow-hidden py-1"
+                  staggerFrom={"last"}
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: "-120%", opacity: 0 }}
+                  staggerDuration={0.02}
+                  splitLevelClassName="overflow-hidden pb-0.5"
+                  transition={{ type: "spring", damping: 25, stiffness: 350 }}
+                  rotationInterval={2800}
+                />
+              </h1>
+              <p className="text-lg sm:text-xl text-slate-600 leading-relaxed">
+                Temukan potensi terbaik Anda menggunakan tes terstandarisasi untuk rekomendasi karir, minat, dan studi masa depan yang akurat.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 w-full max-w-3xl mt-4">
+              {/* Test Card 1: Kecerdasan Majemuk */}
+              <DecayCard
+                width="100%"
+                height={400}
+                image="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop"
+                onClick={() => {
+                  setTestType("majemuk");
+                  setViewState("intro");
+                }}
+                className="group rounded-3xl overflow-hidden border border-slate-100 shadow-[0_15px_35px_-5px_rgba(99,102,241,0.08),0_5px_15px_rgba(0,0,0,0.03)] hover:shadow-[0_25px_50px_-12px_rgba(99,102,241,0.18),0_10px_20px_rgba(99,102,241,0.05)] transition-shadow duration-300"
+              >
+                <div className="flex flex-col justify-between w-full h-full p-8 bg-white/92 group-hover:bg-white/80 transition-colors duration-300 text-left">
+                  <div className="flex flex-col gap-5">
+                    <div className="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-650 flex items-center justify-center font-extrabold shadow-inner group-hover:scale-110 transition-transform">
+                      <Brain className="w-7 h-7" />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <h2 className="text-xl sm:text-2xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors min-h-[56px] flex items-center">
+                        Kecerdasan Majemuk
+                      </h2>
+                      <p className="text-sm text-slate-500 leading-relaxed min-h-[80px]">
+                        Evaluasi 8 bidang kecerdasan (linguistik, logis-matematis, spasial, dll.) berdasarkan Teori Multiple Intelligences Howard Gardner.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-200/60 flex items-center justify-between text-sm font-bold text-indigo-600">
+                    <span>Lihat Selengkapnya & Mulai →</span>
+                    <span className="text-xs px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-750">80 Pertanyaan</span>
+                  </div>
+                </div>
+              </DecayCard>
+
+              {/* Test Card 2: RIASEC Personality */}
+              <DecayCard
+                width="100%"
+                height={400}
+                image="https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=600&auto=format&fit=crop"
+                onClick={() => {
+                  setTestType("riasec");
+                  setViewState("intro");
+                }}
+                className="group rounded-3xl overflow-hidden border border-slate-100 shadow-[0_15px_35px_-5px_rgba(139,92,246,0.08),0_5px_15px_rgba(0,0,0,0.03)] hover:shadow-[0_25px_50px_-12px_rgba(139,92,246,0.18),0_10px_20px_rgba(139,92,246,0.05)] transition-shadow duration-300"
+              >
+                <div className="flex flex-col justify-between w-full h-full p-8 bg-white/92 group-hover:bg-white/80 transition-colors duration-300 text-left">
+                  <div className="flex flex-col gap-5">
+                    <div className="w-14 h-14 rounded-2xl bg-violet-50 text-violet-650 flex items-center justify-center font-extrabold shadow-inner group-hover:scale-110 transition-transform">
+                      <Star className="w-7 h-7" />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <h2 className="text-xl sm:text-2xl font-black text-slate-900 group-hover:text-violet-650 transition-colors min-h-[56px] flex items-center">
+                        Kepribadian & Karir RIASEC
+                      </h2>
+                      <p className="text-sm text-slate-500 leading-relaxed min-h-[80px]">
+                        Temukan kecenderungan minat karir Anda berdasarkan model kepribadian Holland (Realistic, Investigative, Artistic, Social, Enterprising, Conventional).
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-200/60 flex items-center justify-between text-sm font-bold text-violet-600">
+                    <span>Lihat Selengkapnya & Mulai →</span>
+                    <span className="text-xs px-2.5 py-1 rounded-full bg-violet-50 text-violet-750">42 Pertanyaan</span>
+                  </div>
+                </div>
+              </DecayCard>
+            </div>
+          </div>
+        )}
 
         {viewState === "intro" && (
           <QuizIntro
             onStart={handleStartQuiz}
             onSimulate={handleSimulateQuiz}
+            testType={testType}
+            onBack={() => setViewState("select-test")}
           />
         )}
 
         {viewState === "quiz" && (
           <QuizCard
-            questions={questions}
+            questions={activeQuestions}
             currentIndex={currentIndex}
             answers={answers}
             onAnswer={handleAnswer}
@@ -193,7 +295,7 @@ export default function Home() {
           <QuizResult
             result={currentResult}
             onRetake={handleStartQuiz}
-            onGoHome={() => setViewState("intro")}
+            onGoHome={() => setViewState("select-test")}
           />
         )}
       </main>

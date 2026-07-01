@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../ui/Card";
 import { Button } from "../ui/Button";
-import { MessageSquare, Calculator, Compass, Activity, Music, Users, User, Leaf, ArrowRight, Timer, ClipboardList, ShieldCheck, BarChart3, ChevronLeft, ChevronRight } from "lucide-react";
+import { MessageSquare, Calculator, Compass, Activity, Music, Users, User, Leaf, ArrowRight, Timer, ClipboardList, ShieldCheck, BarChart3, ChevronLeft, ChevronRight, Wrench, Search, Palette, Heart, TrendingUp, FileText } from "lucide-react";
 import { Dimension } from "../../types/quiz";
 import { intelligences } from "../../data/intelligences";
+import { riasecTypes } from "../../data/riasec";
 import gsap from "gsap";
 import TextType from "../ui/TextType";
 import MagicBento, { BentoItem } from "../ui/MagicBento";
+import { motion } from "motion/react";
 
 const SQRT_3200 = Math.sqrt(3200);
 
@@ -17,6 +19,8 @@ function cn(...classes: (string | boolean | undefined)[]) {
 interface QuizIntroProps {
   onStart: () => void;
   onSimulate: () => void;
+  testType?: "majemuk" | "riasec";
+  onBack?: () => void;
 }
 
 interface AspectCardProps {
@@ -115,12 +119,16 @@ const AspectCard: React.FC<AspectCardProps> = ({
 export const QuizIntro: React.FC<QuizIntroProps> = ({
   onStart,
   onSimulate,
+  testType = "majemuk",
+  onBack,
 }) => {
   const [selectedRoom, setSelectedRoom] = useState<Dimension | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+
+  const isRiasec = testType === "riasec";
 
   const bentoItems: BentoItem[] = [
     {
@@ -134,7 +142,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
     {
       color: '#ffffff',
       title: 'Jumlah Pertanyaan',
-      description: '80 pertanyaan pilihan ganda skala Likert.',
+      description: isRiasec ? '42 pertanyaan pilihan ganda skala Likert.' : '80 pertanyaan pilihan ganda skala Likert.',
       label: 'Pertanyaan',
       icon: <ClipboardList className="w-5 h-5 text-blue-600" />,
       bgIcon: 'p-2 bg-blue-50 text-blue-600 rounded-xl shrink-0',
@@ -206,7 +214,14 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
   }, [selectedRoom]);
 
   // List of classrooms (aspekt)
-  const classrooms = [
+  const classrooms = isRiasec ? [
+    { dimension: "realistic" as Dimension, code: "", name: "Realistic (Realistik)", description: "Minat pada aktivitas fisik, praktis, mesin, alat, & tanaman.", icon: <Wrench className="w-5 h-5 text-slate-650" />, bgIcon: "bg-slate-50" },
+    { dimension: "investigative" as Dimension, code: "", name: "Investigative (Investigatif)", description: "Minat pada pemecahan masalah ilmiah, analisis, & riset.", icon: <Search className="w-5 h-5 text-blue-650" />, bgIcon: "bg-blue-50" },
+    { dimension: "artistic" as Dimension, code: "", name: "Artistic (Artistik)", description: "Minat pada ekspresi kreatif, seni, musik, & orisinalitas.", icon: <Palette className="w-5 h-5 text-pink-650" />, bgIcon: "bg-pink-50" },
+    { dimension: "social" as Dimension, code: "", name: "Social (Sosial)", description: "Minat pada membantu, mengajar, & melayani orang lain.", icon: <Heart className="w-5 h-5 text-rose-650" />, bgIcon: "bg-rose-50" },
+    { dimension: "enterprising" as Dimension, code: "", name: "Enterprising (Giat)", description: "Minat pada memimpin, memengaruhi, bisnis, & wirausaha.", icon: <TrendingUp className="w-5 h-5 text-amber-650" />, bgIcon: "bg-amber-50" },
+    { dimension: "conventional" as Dimension, code: "", name: "Conventional (Konvensional)", description: "Minat pada keteraturan, administrasi, data, & detail.", icon: <FileText className="w-5 h-5 text-emerald-650" />, bgIcon: "bg-emerald-50" }
+  ] : [
     { dimension: "linguistik" as Dimension, code: "", name: "Kecerdasan Bahasa (Linguistik)", description: "Mengasah menulis, sastra, & tata bahasa.", icon: <MessageSquare className="w-5 h-5 text-purple-650" />, bgIcon: "bg-purple-50" },
     { dimension: "matematis" as Dimension, code: "", name: "Kecerdasan Logika & Matematika", description: "Menguji angka, penalaran, & analisis.", icon: <Calculator className="w-5 h-5 text-blue-650" />, bgIcon: "bg-blue-50" },
     { dimension: "spasial" as Dimension, code: "", name: "Kecerdasan Visual & Spasial", description: "Sketsa visual 3D, kreativitas, & ruang.", icon: <Compass className="w-5 h-5 text-amber-650" />, bgIcon: "bg-amber-50" },
@@ -244,6 +259,14 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
   };
 
   useEffect(() => {
+    const initial = classrooms.map((c, i) => ({
+      ...c,
+      tempId: i
+    }));
+    setAspectsList(initial);
+  }, [testType]);
+
+  useEffect(() => {
     const updateSize = () => {
       const { matches } = window.matchMedia("(min-width: 640px)");
       setCardSize(matches ? 350 : 280);
@@ -254,15 +277,40 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
     return () => window.removeEventListener("resize", updateSize);
   }, []);
 
+  // Autoplay aspect cards carousel
+  useEffect(() => {
+    if (selectedRoom) return; // Pause autoplay when modal details are open
+
+    const interval = setInterval(() => {
+      handleMove(1);
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [aspectsList, selectedRoom]);
+
   return (
     <div ref={containerRef} className="max-w-4xl mx-auto flex flex-col gap-10 text-slate-900 py-6 select-none relative z-10">
+      {onBack && (
+        <div className="w-full flex justify-start gsap-animate">
+          <button 
+            onClick={onBack} 
+            className="flex items-center gap-1.5 text-sm font-bold text-slate-400 hover:text-indigo-650 transition-colors cursor-pointer group"
+          >
+            <span className="group-hover:-translate-x-1 transition-transform inline-block">←</span> Kembali ke Pilihan Tes
+          </button>
+        </div>
+      )}
       
       {/* Hero Section */}
       <div className="text-center flex flex-col gap-4 py-4 gsap-animate">
         <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 leading-none">
           Tes{" "}
           <TextType 
-            text={["Kecerdasan Majemuk", "Potensi Minat & Bakat", "Rekomendasi Jurusan & Karir"]}
+            text={
+              isRiasec 
+                ? ["Kepribadian RIASEC", "Potensi Karir & Minat", "Rekomendasi Jurusan & Profesi"]
+                : ["Kecerdasan Majemuk", "Potensi Minat & Bakat", "Rekomendasi Jurusan & Karir"]
+            }
             as="span"
             className="font-serif italic font-normal text-indigo-600 inline-block"
             typingSpeed={80}
@@ -274,7 +322,9 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
           />
         </h1>
         <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-          Temukan potensi dominan Anda berdasarkan Teori Kecerdasan Majemuk (Multiple Intelligences) untuk kecocokan jurusan kuliah dan profesi masa depan Anda.
+          {isRiasec 
+            ? "Temukan potensi dominan Anda berdasarkan Tipe Kepribadian & Minat Kerja RIASEC untuk kecocokan jurusan kuliah dan profesi masa depan Anda."
+            : "Temukan potensi dominan Anda berdasarkan Teori Kecerdasan Majemuk (Multiple Intelligences) untuk kecocokan jurusan kuliah dan profesi masa depan Anda."}
         </p>
       </div>
 
@@ -312,14 +362,25 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
         </CardContent>
       </Card>
 
-      {/* 8 Areas Stagger Deck */}
+      {/* Areas Stagger Deck */}
       <div className="flex flex-col gap-6 relative">
         <h3 className="text-xl font-extrabold text-slate-900 text-center">
-          Aspek <span className="font-serif italic font-normal text-indigo-600">Kecerdasan Majemuk</span>
+          Aspek <span className="font-serif italic font-normal text-indigo-600">{isRiasec ? "Kepribadian RIASEC" : "Kecerdasan Majemuk"}</span>
         </h3>
         
-        <div
-          className="relative w-full overflow-hidden bg-slate-100/20 rounded-3xl border border-slate-200/50"
+        <motion.div
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.2}
+          onDragEnd={(event, info) => {
+            const swipeThreshold = 50; // swipe threshold in pixels
+            if (info.offset.x < -swipeThreshold) {
+              handleMove(1);
+            } else if (info.offset.x > swipeThreshold) {
+              handleMove(-1);
+            }
+          }}
+          className="relative w-full overflow-hidden bg-slate-100/20 rounded-3xl border border-slate-200/50 cursor-grab active:cursor-grabbing"
           style={{ height: 500 }}
         >
           {aspectsList.map((aspect, index) => {
@@ -337,25 +398,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
               />
             );
           })}
-          
-          {/* Navigation Buttons */}
-          <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-3 z-20">
-            <button
-              onClick={() => handleMove(-1)}
-              className="flex h-12 w-12 items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-650 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm focus:outline-none cursor-pointer active:scale-95"
-              aria-label="Previous aspect"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => handleMove(1)}
-              className="flex h-12 w-12 items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-650 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm focus:outline-none cursor-pointer active:scale-95"
-              aria-label="Next aspect"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* CLASSROOM WHITEBOARD MODAL */}
@@ -386,10 +429,10 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
               </div>
               <div className="flex flex-col gap-0.5">
                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                  Aspek Kecerdasan
+                  {isRiasec ? "Aspek Kepribadian" : "Aspek Kecerdasan"}
                 </span>
                 <h3 className="text-lg font-black text-slate-900 leading-tight">
-                  {intelligences[selectedRoom]?.name}
+                  {isRiasec ? riasecTypes[selectedRoom]?.name : intelligences[selectedRoom]?.name}
                 </h3>
               </div>
             </div>
@@ -398,13 +441,15 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
             <div className="flex flex-col gap-4 text-sm text-slate-650">
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                 <h5 className="font-extrabold text-slate-800 text-xs uppercase tracking-wide mb-1.5">Deskripsi:</h5>
-                <p className="leading-relaxed text-xs sm:text-sm">{intelligences[selectedRoom]?.description}</p>
+                <p className="leading-relaxed text-xs sm:text-sm">
+                  {isRiasec ? riasecTypes[selectedRoom]?.description : intelligences[selectedRoom]?.description}
+                </p>
               </div>
 
               <div>
                 <h5 className="font-extrabold text-slate-800 text-xs uppercase tracking-wide mb-2">Saran Jurusan Kuliah:</h5>
                 <div className="flex flex-wrap gap-1.5">
-                  {intelligences[selectedRoom]?.majors.map((major, i) => (
+                  {(isRiasec ? riasecTypes[selectedRoom]?.majors : intelligences[selectedRoom]?.majors)?.map((major, i) => (
                     <span key={i} className="px-3 py-1.5 rounded-full bg-indigo-50/50 text-indigo-750 text-[11px] font-bold border border-indigo-100/50">
                       🎓 {major}
                     </span>
@@ -415,7 +460,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
               <div>
                 <h5 className="font-extrabold text-slate-800 text-xs uppercase tracking-wide mb-2">Profesi & Karir yang Cocok:</h5>
                 <div className="flex flex-wrap gap-1.5">
-                  {intelligences[selectedRoom]?.careers.map((career, i) => (
+                  {(isRiasec ? riasecTypes[selectedRoom]?.careers : intelligences[selectedRoom]?.careers)?.map((career, i) => (
                     <span key={i} className="px-3 py-1.5 rounded-full bg-slate-100 text-slate-800 text-[11px] font-bold border border-slate-200/50">
                       💼 {career}
                     </span>

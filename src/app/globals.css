@@ -15,9 +15,14 @@
 }
 
 body {
-  background: #f8fafc;
+  background: #fafafc;
   color: #0f172a;
   font-family: var(--font-sans), sans-serif;
+}
+
+.bg-grid-dots {
+  background-size: 24px 24px;
+  background-image: radial-gradient(circle, rgba(148, 163, 184, 0.07) 1.2px, transparent 1.2px);
 }
 
 /* Custom Micro-Animations */

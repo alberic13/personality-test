@@ -6,7 +6,13 @@ export type Dimension =
   | "musikal"
   | "interpersonal"
   | "intrapersonal"
-  | "naturalis";
+  | "naturalis"
+  | "realistic"
+  | "investigative"
+  | "artistic"
+  | "social"
+  | "enterprising"
+  | "conventional";
 
 export interface Question {
   id: number;
@@ -22,16 +28,19 @@ export interface Answer {
 export interface IntelligenceScore {
   dimension: Dimension;
   name: string;
-  score: number;       // Skor mentah 10 - 50
-  percentage: number;  // Persentase 20% - 100%
+  score: number;       // Skor mentah
+  percentage: number;  // Persentase per dimensi
 }
 
 export interface QuizResult {
   id: string;
-  dominantTypes: Dimension[]; // Jenis kecerdasan tertinggi
-  scores: Record<Dimension, number>; // Persentase (20% - 100%) per dimensi
+  dominantTypes: Dimension[]; // Jenis kecerdasan/kepribadian tertinggi
+  scores: Record<string, number>; // Persentase per dimensi (using string to handle dynamic types cleanly)
   date: string;
   answers: Answer[];
+  testType?: "majemuk" | "riasec";
+  name?: string;
+  email?: string;
 }
 
 export interface IntelligenceType {

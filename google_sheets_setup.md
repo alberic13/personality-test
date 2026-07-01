@@ -15,42 +15,79 @@ Dokumen ini berisi kode dan langkah-langkah untuk mengintegrasikan hasil kuis ke
 ```javascript
 function doPost(e) {
   try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     var data = JSON.parse(e.postData.contents);
+    var testType = data.testType || "majemuk";
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    
+    var sheetName = testType === "riasec" ? "RIASEC" : "Kecerdasan Majemuk";
+    var sheet = ss.getSheetByName(sheetName);
+    if (!sheet) {
+      sheet = ss.insertSheet(sheetName);
+    }
     
     // Inisialisasi header kolom jika sheet masih kosong
     if (sheet.getLastRow() === 0) {
-      sheet.appendRow([
-        "Tanggal & Waktu",
-        "Nama Lengkap",
-        "Alamat Email",
-        "Linguistik",
-        "Matematis",
-        "Spasial",
-        "Kinestetik",
-        "Musikal",
-        "Interpersonal",
-        "Intrapersonal",
-        "Naturalis",
-        "Kecerdasan Dominan"
-      ]);
+      if (testType === "riasec") {
+        sheet.appendRow([
+          "Tanggal & Waktu",
+          "Nama Lengkap",
+          "Alamat Email",
+          "Realistic",
+          "Investigative",
+          "Artistic",
+          "Social",
+          "Enterprising",
+          "Conventional",
+          "Tipe Dominan"
+        ]);
+      } else {
+        sheet.appendRow([
+          "Tanggal & Waktu",
+          "Nama Lengkap",
+          "Alamat Email",
+          "Linguistik",
+          "Matematis",
+          "Spasial",
+          "Kinestetik",
+          "Musikal",
+          "Interpersonal",
+          "Intrapersonal",
+          "Naturalis",
+          "Kecerdasan Dominan"
+        ]);
+      }
     }
     
     // Masukkan data jawaban & skoring ke baris baru
-    sheet.appendRow([
-      new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }),
-      data.name,
-      data.email,
-      data.linguistik,
-      data.matematis,
-      data.spasial,
-      data.kinestetik,
-      data.musikal,
-      data.interpersonal,
-      data.intrapersonal,
-      data.naturalis,
-      data.dominant
-    ]);
+    if (testType === "riasec") {
+      sheet.appendRow([
+        new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }),
+        data.name,
+        data.email,
+        data.realistic,
+        data.investigative,
+        data.artistic,
+        data.social,
+        data.enterprising,
+        data.conventional,
+        data.dominant
+      ]);
+    } else {
+      sheet.appendRow([
+        new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }),
+        data.name,
+        data.email,
+        data.linguistik,
+        data.matematis,
+        data.spasial,
+        data.kinestetik,
+        data.musikal,
+        data.interpersonal,
+        data.intrapersonal,
+        data.naturalis,
+        data.dominant
+      ]);
+    }
     
     // Mengembalikan respons JSON sukses
     return ContentService.createTextOutput(JSON.stringify({ status: "success" }))

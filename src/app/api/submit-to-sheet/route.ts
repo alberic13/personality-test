@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, scores, dominant, date } = body;
+    const { name, email, scores, dominant, date, testType } = body;
 
     // Ambil URL Google Apps Script Web App dari env
     const webappUrl = process.env.SHEET_WEBAPP_URL || process.env.NEXT_PUBLIC_SHEET_WEBAPP_URL;
@@ -19,8 +19,10 @@ export async function POST(request: Request) {
 
     // Siapkan data untuk dikirim ke Google Sheet
     const payload = {
+      testType: testType || "majemuk",
       name,
       email,
+      // Kecerdasan Majemuk
       linguistik: scores.linguistik || 0,
       matematis: scores.matematis || 0,
       spasial: scores.spasial || 0,
@@ -29,6 +31,14 @@ export async function POST(request: Request) {
       interpersonal: scores.interpersonal || 0,
       intrapersonal: scores.intrapersonal || 0,
       naturalis: scores.naturalis || 0,
+      // RIASEC
+      realistic: scores.realistic || 0,
+      investigative: scores.investigative || 0,
+      artistic: scores.artistic || 0,
+      social: scores.social || 0,
+      enterprising: scores.enterprising || 0,
+      conventional: scores.conventional || 0,
+
       dominant: dominant.join(", "),
       date: date || new Date().toISOString()
     };

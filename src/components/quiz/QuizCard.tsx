@@ -6,6 +6,14 @@ import { ProgressBar } from "../ui/ProgressBar";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import gsap from "gsap";
 
+const LIKERT_OPTIONS = [
+  { score: 1, label: "Sangat Tidak Setuju", color: "bg-rose-500 hover:bg-rose-600", borderColor: "border-rose-300", activeColor: "ring-rose-500 bg-rose-500 text-white", size: "w-12 h-12 sm:w-16 sm:h-16" },
+  { score: 2, label: "Tidak Setuju", color: "bg-orange-400 hover:bg-orange-500", borderColor: "border-orange-200", activeColor: "ring-orange-400 bg-orange-400 text-white", size: "w-10 h-10 sm:w-12 sm:h-12" },
+  { score: 3, label: "Netral", color: "bg-slate-400 hover:bg-slate-500", borderColor: "border-slate-300", activeColor: "ring-slate-400 bg-slate-400 text-white", size: "w-9 h-9 sm:w-10 sm:h-10" },
+  { score: 4, label: "Setuju", color: "bg-blue-500 hover:bg-blue-600", borderColor: "border-blue-200", activeColor: "ring-blue-500 bg-blue-500 text-white", size: "w-10 h-10 sm:w-12 sm:h-12" },
+  { score: 5, label: "Sangat Setuju", color: "bg-blue-600 hover:bg-blue-700", borderColor: "border-blue-300", activeColor: "ring-blue-600 bg-blue-600 text-white", size: "w-12 h-12 sm:w-16 sm:h-16" },
+];
+
 interface QuizCardProps {
   questions: Question[];
   currentIndex: number;
@@ -26,15 +34,23 @@ export const QuizCard: React.FC<QuizCardProps> = ({
   onSubmit,
 }) => {
   const currentQuestion = questions[currentIndex];
-  const currentAnswer = answers.find((a) => a.questionId === currentQuestion.id);
+  const currentAnswer = answers.find((a) => a.questionId === currentQuestion?.id);
 
   const totalQuestions = questions.length;
   const progressPercent = Math.round(((currentIndex + 1) / totalQuestions) * 100);
 
   const questionRef = useRef<HTMLHeadingElement>(null);
   const optionsRef = useRef<HTMLDivElement>(null);
+  const autoAdvanceTimer = useRef<NodeJS.Timeout | null>(null);
 
-  // Trigger GSAP animations when question index updates (using gsap.from to avoid permanent hidden states)
+  useEffect(() => {
+    return () => {
+      if (autoAdvanceTimer.current) {
+        clearTimeout(autoAdvanceTimer.current);
+      }
+    };
+  }, []);
+
   useEffect(() => {
     if (questionRef.current) {
       gsap.from(
@@ -58,21 +74,16 @@ export const QuizCard: React.FC<QuizCardProps> = ({
     }
   }, [currentIndex]);
 
-  // Opsi skala Likert 5-titik
-  const likertOptions = [
-    { score: 1, label: "Sangat Tidak Setuju", color: "bg-rose-500 hover:bg-rose-600", borderColor: "border-rose-300", activeColor: "ring-rose-500 bg-rose-500 text-white", size: "w-12 h-12 sm:w-16 sm:h-16" },
-    { score: 2, label: "Tidak Setuju", color: "bg-orange-400 hover:bg-orange-500", borderColor: "border-orange-200", activeColor: "ring-orange-400 bg-orange-400 text-white", size: "w-10 h-10 sm:w-12 sm:h-12" },
-    { score: 3, label: "Netral", color: "bg-slate-400 hover:bg-slate-500", borderColor: "border-slate-300", activeColor: "ring-slate-400 bg-slate-400 text-white", size: "w-9 h-9 sm:w-10 sm:h-10" },
-    { score: 4, label: "Setuju", color: "bg-blue-450 hover:bg-blue-550", borderColor: "border-blue-200", activeColor: "ring-blue-500 bg-blue-500 text-white", size: "w-10 h-10 sm:w-12 sm:h-12" },
-    { score: 5, label: "Sangat Setuju", color: "bg-blue-600 hover:bg-blue-700", borderColor: "border-blue-300", activeColor: "ring-blue-600 bg-blue-600 text-white", size: "w-12 h-12 sm:w-16 sm:h-16" },
-  ];
-
   const handleSelectOption = (score: number) => {
+    if (!currentQuestion) return;
     onAnswer(currentQuestion.id, score);
 
-    // Auto-advance dengan sedikit delay agar animasi terpilih terlihat
+    if (autoAdvanceTimer.current) {
+      clearTimeout(autoAdvanceTimer.current);
+    }
+
     if (currentIndex < totalQuestions - 1) {
-      setTimeout(() => {
+      autoAdvanceTimer.current = setTimeout(() => {
         onNext();
       }, 350);
     }
@@ -80,6 +91,8 @@ export const QuizCard: React.FC<QuizCardProps> = ({
 
   const isLastQuestion = currentIndex === totalQuestions - 1;
   const isAnswered = currentAnswer !== undefined;
+
+  if (!currentQuestion) return null;
 
   return (
     <div className="max-w-3xl mx-auto flex flex-col gap-6">
@@ -105,13 +118,15 @@ export const QuizCard: React.FC<QuizCardProps> = ({
               {/* Garis penghubung di belakang bulatan */}
               <div className="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-[3px] bg-zinc-200 -z-10" />
 
-              {likertOptions.map((opt) => {
+              {LIKERT_OPTIONS.map((opt) => {
                 const isSelected = currentAnswer?.score === opt.score;
                 return (
                   <button
                     key={opt.score}
+                    type="button"
                     onClick={() => handleSelectOption(opt.score)}
-                    className={`gsap-option flex items-center justify-center rounded-full border-2 transition-all duration-300 transform cursor-pointer hover:scale-115 active:scale-95 focus:outline-none ${
+                    aria-label={opt.label}
+                    className={`gsap-option flex items-center justify-center rounded-full border-2 transition-all duration-300 transform cursor-pointer hover:scale-110 active:scale-95 focus:outline-none ${
                       opt.size
                     } ${
                       isSelected

@@ -14,7 +14,7 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    "inline-flex items-center justify-center font-bold tracking-wide rounded-full whitespace-nowrap transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-slate-500/50 disabled:opacity-50 disabled:pointer-events-none active:scale-98 cursor-pointer";
+    "inline-flex items-center justify-center font-bold tracking-wide rounded-full whitespace-nowrap transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-slate-500/50 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] cursor-pointer";
 
   const variants = {
     primary:
@@ -24,7 +24,7 @@ export const Button: React.FC<ButtonProps> = ({
     outline:
       "border border-slate-200 text-slate-700 hover:bg-slate-50 bg-white shadow-sm",
     ghost:
-      "text-slate-650 hover:bg-slate-100 hover:text-slate-900 bg-transparent",
+      "text-slate-600 hover:bg-slate-100 hover:text-slate-900 bg-transparent",
   };
 
   const sizes = {

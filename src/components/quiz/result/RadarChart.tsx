@@ -67,7 +67,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
                   y1="180"
                   x2={x}
                   y2={y}
-                  className="stroke-slate-150"
+                  className="stroke-slate-200"
                   strokeWidth="1"
                 />
               );
@@ -104,7 +104,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
                   r={isDominant ? "5.5" : "4"}
                   className={`gsap-radar-vertex ${
                     isDominant
-                      ? "fill-blue-650 stroke-white stroke-2 shadow-sm"
+                      ? "fill-blue-600 stroke-white stroke-2 shadow-sm"
                       : "fill-slate-900 stroke-white stroke-1.5"
                   }`}
                 />
@@ -139,7 +139,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({
                   dy={dy}
                   textAnchor={anchor}
                   className={`text-[10px] sm:text-xs font-black select-none ${
-                    isDominant ? "fill-slate-950 font-black" : "fill-slate-450"
+                    isDominant ? "fill-slate-950 font-black" : "fill-slate-500"
                   }`}
                 >
                   {label} ({scoreItem.score})

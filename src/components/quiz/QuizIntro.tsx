@@ -66,30 +66,30 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
   const classrooms: AspectItem[] = useMemo(() => {
     if (isRiasec) {
       return [
-        { dimension: "realistic", code: "", name: "Realistic (Realistik)", description: "Minat pada aktivitas fisik, praktis, mesin, alat, & tanaman.", icon: <Wrench className="w-5 h-5 text-slate-655" />, bgIcon: "bg-slate-50", tempId: 0 },
-        { dimension: "investigative", code: "", name: "Investigative (Investigatif)", description: "Minat pada pemecahan masalah ilmiah, analisis, & riset.", icon: <Search className="w-5 h-5 text-blue-655" />, bgIcon: "bg-blue-50", tempId: 1 },
-        { dimension: "artistic", code: "", name: "Artistic (Artistik)", description: "Minat pada ekspresi kreatif, seni, musik, & orisinalitas.", icon: <Palette className="w-5 h-5 text-pink-655" />, bgIcon: "bg-pink-50", tempId: 2 },
-        { dimension: "social", code: "", name: "Social (Sosial)", description: "Minat pada membantu, mengajar, & melayani orang lain.", icon: <Heart className="w-5 h-5 text-rose-655" />, bgIcon: "bg-rose-50", tempId: 3 },
-        { dimension: "enterprising", code: "", name: "Enterprising (Giat)", description: "Minat pada memimpin, memengaruhi, bisnis, & wirausaha.", icon: <TrendingUp className="w-5 h-5 text-amber-655" />, bgIcon: "bg-amber-50", tempId: 4 },
-        { dimension: "conventional", code: "", name: "Conventional (Konvensional)", description: "Minat pada keteraturan, administrasi, data, & detail.", icon: <FileText className="w-5 h-5 text-emerald-655" />, bgIcon: "bg-emerald-50", tempId: 5 },
+        { dimension: "realistic", code: "", name: "Realistic (Realistik)", description: "Minat pada aktivitas fisik, praktis, mesin, alat, & tanaman.", icon: <Wrench className="w-5 h-5 text-slate-600" />, bgIcon: "bg-slate-50", tempId: 0 },
+        { dimension: "investigative", code: "", name: "Investigative (Investigatif)", description: "Minat pada pemecahan masalah ilmiah, analisis, & riset.", icon: <Search className="w-5 h-5 text-blue-600" />, bgIcon: "bg-blue-50", tempId: 1 },
+        { dimension: "artistic", code: "", name: "Artistic (Artistik)", description: "Minat pada ekspresi kreatif, seni, musik, & orisinalitas.", icon: <Palette className="w-5 h-5 text-pink-600" />, bgIcon: "bg-pink-50", tempId: 2 },
+        { dimension: "social", code: "", name: "Social (Sosial)", description: "Minat pada membantu, mengajar, & melayani orang lain.", icon: <Heart className="w-5 h-5 text-rose-600" />, bgIcon: "bg-rose-50", tempId: 3 },
+        { dimension: "enterprising", code: "", name: "Enterprising (Giat)", description: "Minat pada memimpin, memengaruhi, bisnis, & wirausaha.", icon: <TrendingUp className="w-5 h-5 text-amber-600" />, bgIcon: "bg-amber-50", tempId: 4 },
+        { dimension: "conventional", code: "", name: "Conventional (Konvensional)", description: "Minat pada keteraturan, administrasi, data, & detail.", icon: <FileText className="w-5 h-5 text-emerald-600" />, bgIcon: "bg-emerald-50", tempId: 5 },
       ];
     }
     if (isGayaBelajar) {
       return [
-        { dimension: "gaya_visual", code: "", name: "Visual (Gaya Belajar Visual)", description: "Belajar dengan melihat gambar, diagram, poster, dan teks tertulis.", icon: <Palette className="w-5 h-5 text-indigo-650" />, bgIcon: "bg-indigo-50", tempId: 0 },
-        { dimension: "gaya_auditori", code: "", name: "Auditori (Gaya Belajar Auditori)", description: "Belajar dengan mendengarkan penjelasan lisan, diskusi, dan rekaman audio.", icon: <MessageSquare className="w-5 h-5 text-purple-650" />, bgIcon: "bg-purple-50", tempId: 1 },
-        { dimension: "gaya_kinestetik", code: "", name: "Kinestetik (Gaya Belajar Kinestetik)", description: "Belajar dengan mempraktikkan langsung, olahraga, kriya tangan, dan aktivitas fisik.", icon: <Activity className="w-5 h-5 text-orange-650" />, bgIcon: "bg-orange-50", tempId: 2 },
+        { dimension: "gaya_visual", code: "", name: "Visual (Gaya Belajar Visual)", description: "Belajar dengan melihat gambar, diagram, poster, dan teks tertulis.", icon: <Palette className="w-5 h-5 text-indigo-600" />, bgIcon: "bg-indigo-50", tempId: 0 },
+        { dimension: "gaya_auditori", code: "", name: "Auditori (Gaya Belajar Auditori)", description: "Belajar dengan mendengarkan penjelasan lisan, diskusi, dan rekaman audio.", icon: <MessageSquare className="w-5 h-5 text-purple-600" />, bgIcon: "bg-purple-50", tempId: 1 },
+        { dimension: "gaya_kinestetik", code: "", name: "Kinestetik (Gaya Belajar Kinestetik)", description: "Belajar dengan mempraktikkan langsung, olahraga, kriya tangan, dan aktivitas fisik.", icon: <Activity className="w-5 h-5 text-orange-600" />, bgIcon: "bg-orange-50", tempId: 2 },
       ];
     }
     return [
-      { dimension: "linguistik", code: "", name: "Kecerdasan Bahasa (Linguistik)", description: "Mengasah menulis, sastra, & tata bahasa.", icon: <MessageSquare className="w-5 h-5 text-purple-655" />, bgIcon: "bg-purple-50", tempId: 0 },
-      { dimension: "matematis", code: "", name: "Kecerdasan Logika & Matematika", description: "Menguji angka, penalaran, & analisis.", icon: <Calculator className="w-5 h-5 text-blue-655" />, bgIcon: "bg-blue-50", tempId: 1 },
-      { dimension: "spasial", code: "", name: "Kecerdasan Visual & Spasial", description: "Sketsa visual 3D, kreativitas, & ruang.", icon: <Compass className="w-5 h-5 text-amber-655" />, bgIcon: "bg-amber-50", tempId: 2 },
-      { dimension: "kinestetik", code: "", name: "Kecerdasan Kinestetik & Jasmani", description: "Ketangkasan fisik, koordinasi, & gerak.", icon: <Activity className="w-5 h-5 text-orange-655" />, bgIcon: "bg-orange-50", tempId: 3 },
-      { dimension: "musikal", code: "", name: "Kecerdasan Musik & Harmoni", description: "Melodi, irama nada, & harmoni instrumen.", icon: <Music className="w-5 h-5 text-pink-655" />, bgIcon: "bg-pink-50", tempId: 4 },
-      { dimension: "interpersonal", code: "", name: "Kecerdasan Interpersonal (Sosial)", description: "Kolaborasi tim, empati, & komunikasi.", icon: <Users className="w-5 h-5 text-teal-655" />, bgIcon: "bg-teal-50", tempId: 5 },
-      { dimension: "intrapersonal", code: "", name: "Kecerdasan Intrapersonal (Diri)", description: "Refleksi karakter, mental, & emosi diri.", icon: <User className="w-5 h-5 text-indigo-655" />, bgIcon: "bg-indigo-50", tempId: 6 },
-      { dimension: "naturalis", code: "", name: "Kecerdasan Naturalis (Alam)", description: "Ekosistem alam, ekologi, & flora-fauna.", icon: <Leaf className="w-5 h-5 text-emerald-655" />, bgIcon: "bg-emerald-50", tempId: 7 },
+      { dimension: "linguistik", code: "", name: "Kecerdasan Bahasa (Linguistik)", description: "Mengasah menulis, sastra, & tata bahasa.", icon: <MessageSquare className="w-5 h-5 text-purple-600" />, bgIcon: "bg-purple-50", tempId: 0 },
+      { dimension: "matematis", code: "", name: "Kecerdasan Logika & Matematika", description: "Menguji angka, penalaran, & analisis.", icon: <Calculator className="w-5 h-5 text-blue-600" />, bgIcon: "bg-blue-50", tempId: 1 },
+      { dimension: "spasial", code: "", name: "Kecerdasan Visual & Spasial", description: "Sketsa visual 3D, kreativitas, & ruang.", icon: <Compass className="w-5 h-5 text-amber-600" />, bgIcon: "bg-amber-50", tempId: 2 },
+      { dimension: "kinestetik", code: "", name: "Kecerdasan Kinestetik & Jasmani", description: "Ketangkasan fisik, koordinasi, & gerak.", icon: <Activity className="w-5 h-5 text-orange-600" />, bgIcon: "bg-orange-50", tempId: 3 },
+      { dimension: "musikal", code: "", name: "Kecerdasan Musik & Harmoni", description: "Melodi, irama nada, & harmoni instrumen.", icon: <Music className="w-5 h-5 text-pink-600" />, bgIcon: "bg-pink-50", tempId: 4 },
+      { dimension: "interpersonal", code: "", name: "Kecerdasan Interpersonal (Sosial)", description: "Kolaborasi tim, empati, & komunikasi.", icon: <Users className="w-5 h-5 text-teal-600" />, bgIcon: "bg-teal-50", tempId: 5 },
+      { dimension: "intrapersonal", code: "", name: "Kecerdasan Intrapersonal (Diri)", description: "Refleksi karakter, mental, & emosi diri.", icon: <User className="w-5 h-5 text-indigo-600" />, bgIcon: "bg-indigo-50", tempId: 6 },
+      { dimension: "naturalis", code: "", name: "Kecerdasan Naturalis (Alam)", description: "Ekosistem alam, ekologi, & flora-fauna.", icon: <Leaf className="w-5 h-5 text-emerald-600" />, bgIcon: "bg-emerald-50", tempId: 7 },
     ];
   }, [isRiasec, isGayaBelajar]);
 
@@ -123,7 +123,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
         <div className="w-full flex justify-start gsap-animate">
           <button
             onClick={onBack}
-            className="flex items-center gap-1.5 text-sm font-bold text-slate-400 hover:text-indigo-650 transition-colors cursor-pointer group"
+            className="flex items-center gap-1.5 text-sm font-bold text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer group"
           >
             <span className="group-hover:-translate-x-1 transition-transform inline-block">←</span> Kembali ke Pilihan Tes
           </button>

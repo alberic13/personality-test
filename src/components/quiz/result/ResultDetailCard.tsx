@@ -83,7 +83,7 @@ export const ResultDetailCard: React.FC<ResultDetailCardProps> = ({
         {/* 2. JURUSAN KULIAH */}
         <div className="flex flex-col gap-3 pb-8 border-b border-slate-100">
           <h4 className="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
-            <GraduationCap className="w-6 h-6 text-indigo-650" />
+            <GraduationCap className="w-6 h-6 text-indigo-600" />
             Rekomendasi Jurusan Kuliah
           </h4>
           <p className="text-xs sm:text-sm text-slate-500">Pilihan program studi akademis yang sangat sesuai untuk mengembangkan bakat alami Anda:</p>
@@ -104,7 +104,7 @@ export const ResultDetailCard: React.FC<ResultDetailCardProps> = ({
         {/* 3. PROFESI & KARIR */}
         <div className="flex flex-col gap-3">
           <h4 className="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
-            <Briefcase className="w-5.5 h-5.5 text-emerald-650" />
+            <Briefcase className="w-5.5 h-5.5 text-emerald-600" />
             Profesi & Karir yang Cocok
           </h4>
           <p className="text-xs sm:text-sm text-slate-500">Karier di mana Anda dapat berprestasi dan mengoptimalkan keahlian alami Anda:</p>
@@ -125,7 +125,7 @@ export const ResultDetailCard: React.FC<ResultDetailCardProps> = ({
         </div>
 
         {/* Footer Actions */}
-        <div className="border-t border-slate-150 pt-8 flex flex-col sm:flex-row sm:flex-wrap gap-3.5 mt-6 print:hidden">
+        <div className="border-t border-slate-200 pt-8 flex flex-col sm:flex-row sm:flex-wrap gap-3.5 mt-6 print:hidden">
           <Button variant="primary" onClick={onRetake} className="w-full sm:w-auto flex items-center">
             <RefreshCw className="mr-2 w-4.5 h-4.5 animate-spin-hover" />
             Ulangi Tes

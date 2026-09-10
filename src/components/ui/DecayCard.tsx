@@ -32,11 +32,11 @@ const DecayCard: React.FC<DecayCardProps> = ({
 
   return (
     <div 
-      className={`content ${className}`} 
+      className={`decay-card-content ${className}`} 
       style={{ width: widthStyle, height: heightStyle }} 
       onClick={onClick}
     >
-      <svg viewBox="-60 -75 720 900" preserveAspectRatio="xMidYMid slice" className="svg">
+      <svg viewBox="-60 -75 720 900" preserveAspectRatio="xMidYMid slice" className="decay-card-svg">
         <filter id={filterId}>
           <feTurbulence
             type="turbulence"

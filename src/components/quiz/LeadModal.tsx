@@ -74,6 +74,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({
           onClick={onClose} 
           className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 font-bold p-1 cursor-pointer"
           title="Batal"
+          aria-label="Tutup modal"
         >
           ✕
         </button>

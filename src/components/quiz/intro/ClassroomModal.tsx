@@ -68,11 +68,12 @@ export const ClassroomModal: React.FC<ClassroomModalProps> = ({
       }}
       className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
     >
-      <div ref={modalRef} className="bg-white border border-slate-250 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl flex flex-col gap-5 relative opacity-0 z-50">
+      <div ref={modalRef} className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl flex flex-col gap-5 relative opacity-0 z-50">
         <button
           onClick={onClose}
           className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 font-bold p-1 cursor-pointer"
           title="Tutup"
+          aria-label="Tutup modal"
         >
           ✕
         </button>
@@ -91,7 +92,7 @@ export const ClassroomModal: React.FC<ClassroomModalProps> = ({
           </div>
         </div>
 
-        <div className="flex flex-col gap-4 text-sm text-slate-650">
+        <div className="flex flex-col gap-4 text-sm text-slate-600">
           <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
             <h5 className="font-extrabold text-slate-800 text-xs uppercase tracking-wide mb-1.5">Deskripsi:</h5>
             <p className="leading-relaxed text-xs sm:text-sm">
@@ -103,7 +104,7 @@ export const ClassroomModal: React.FC<ClassroomModalProps> = ({
             <h5 className="font-extrabold text-slate-800 text-xs uppercase tracking-wide mb-2">Saran Jurusan Kuliah:</h5>
             <div className="flex flex-wrap gap-1.5">
               {currentData.majors?.map((major, i) => (
-                <span key={i} className="px-3 py-1.5 rounded-full bg-indigo-50/50 text-indigo-750 text-[11px] font-bold border border-indigo-100/50">
+                <span key={i} className="px-3 py-1.5 rounded-full bg-indigo-50/50 text-indigo-700 text-[11px] font-bold border border-indigo-100/50">
                   🎓 {major}
                 </span>
               ))}

@@ -17,7 +17,6 @@ export function calculateQuizResult(answers: Answer[], testType: "majemuk" | "ri
     : isGayaBelajar 
       ? gayaBelajarQuestions 
       : multipleIntelligenceQuestions;
-  const maxScorePerDim = isRiasec ? 35 : (isGayaBelajar ? 45 : 50); // 7 Qs * 5 vs 9 Qs * 5 vs 10 Qs * 5
 
   const scores: Record<string, number> = {};
   const rawScores: Record<string, number> = {};
@@ -38,8 +37,9 @@ export function calculateQuizResult(answers: Answer[], testType: "majemuk" | "ri
     });
     
     rawScores[dim] = sum;
-    // Konversi ke persentase: (skor / maxScorePerDim) * 100
-    scores[dim] = Math.round((sum / maxScorePerDim) * 100);
+    // Konversi ke persentase: (skor / maxDimScore) * 100
+    const maxDimScore = dimQuestions.length * 5 || 1;
+    scores[dim] = Math.round((sum / maxDimScore) * 100);
   });
 
   // 2. Tentukan dominasi kecerdasan/kepribadian (skor mentah tertinggi)

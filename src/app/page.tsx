@@ -90,7 +90,7 @@ export default function Home() {
         )}
       </main>
 
-      <footer className="w-full py-6 text-center border-t border-slate-150 text-xs sm:text-sm text-slate-400 mt-6 bg-white/30 backdrop-blur-sm transition-colors duration-300">
+      <footer className="w-full py-6 text-center border-t border-slate-200 text-xs sm:text-sm text-slate-400 mt-6 bg-white/30 backdrop-blur-sm transition-colors duration-300">
         <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© {new Date().getFullYear()} Test Personal | Zalde.</p>
           <div className="flex items-center gap-4">

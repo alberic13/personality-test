@@ -101,7 +101,7 @@ const MagicBento: React.FC<MagicBentoProps> = ({
                 <h2 className="magic-bento-card__title font-extrabold text-sm sm:text-base mb-1">
                   {card.title}
                 </h2>
-                <p className="magic-bento-card__description text-xs sm:text-sm text-slate-350 leading-relaxed font-light">
+                <p className="magic-bento-card__description text-xs sm:text-sm text-slate-400 leading-relaxed font-light">
                   {card.description}
                 </p>
               </div>

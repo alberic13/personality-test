@@ -69,11 +69,11 @@ export function getThemeColors(type: Dimension): ThemeColors {
     case "spasial":
       return { bg: "from-amber-500/8 via-orange-500/2 to-transparent", border: "border-amber-100", badgeBg: "bg-amber-50 text-amber-800 border-amber-100", gradientText: "from-amber-700 to-orange-700" };
     case "kinestetik":
-      return { bg: "from-orange-500/8 via-rose-500/2 to-transparent", border: "border-orange-100", badgeBg: "bg-orange-50 text-orange-855 border-orange-100", gradientText: "from-orange-700 to-rose-700" };
+      return { bg: "from-orange-500/8 via-rose-500/2 to-transparent", border: "border-orange-100", badgeBg: "bg-orange-50 text-orange-800 border-orange-100", gradientText: "from-orange-700 to-rose-700" };
     case "musikal":
       return { bg: "from-pink-500/8 via-rose-500/2 to-transparent", border: "border-pink-100", badgeBg: "bg-pink-50 text-pink-700 border-pink-100", gradientText: "from-pink-700 to-rose-700" };
     case "interpersonal":
-      return { bg: "from-teal-500/8 via-emerald-500/2 to-transparent", border: "border-teal-100", badgeBg: "bg-teal-50 text-teal-850 border-teal-100", gradientText: "from-teal-700 to-emerald-700" };
+      return { bg: "from-teal-500/8 via-emerald-500/2 to-transparent", border: "border-teal-100", badgeBg: "bg-teal-50 text-teal-800 border-teal-100", gradientText: "from-teal-700 to-emerald-700" };
     case "intrapersonal":
       return { bg: "from-indigo-500/8 via-violet-500/2 to-transparent", border: "border-indigo-100", badgeBg: "bg-indigo-50 text-indigo-700 border-indigo-100", gradientText: "from-indigo-700 to-violet-700" };
     case "naturalis":
@@ -91,11 +91,11 @@ export function getThemeColors(type: Dimension): ThemeColors {
     case "conventional":
       return { bg: "from-emerald-500/8 via-green-500/2 to-transparent", border: "border-emerald-100", badgeBg: "bg-emerald-50 text-emerald-800 border-emerald-100", gradientText: "from-emerald-700 to-green-700" };
     case "gaya_visual":
-      return { bg: "from-indigo-500/8 via-indigo-500/2 to-transparent", border: "border-indigo-100", badgeBg: "bg-indigo-50 text-indigo-750 border-indigo-100", gradientText: "from-indigo-700 to-indigo-850" };
+      return { bg: "from-indigo-500/8 via-indigo-500/2 to-transparent", border: "border-indigo-100", badgeBg: "bg-indigo-50 text-indigo-700 border-indigo-100", gradientText: "from-indigo-700 to-indigo-800" };
     case "gaya_auditori":
-      return { bg: "from-purple-500/8 via-purple-500/2 to-transparent", border: "border-purple-100", badgeBg: "bg-purple-50 text-purple-750 border-purple-100", gradientText: "from-purple-700 to-purple-850" };
+      return { bg: "from-purple-500/8 via-purple-500/2 to-transparent", border: "border-purple-100", badgeBg: "bg-purple-50 text-purple-700 border-purple-100", gradientText: "from-purple-700 to-purple-800" };
     case "gaya_kinestetik":
-      return { bg: "from-orange-500/8 via-orange-500/2 to-transparent", border: "border-orange-100", badgeBg: "bg-orange-50 text-orange-850 border-orange-100", gradientText: "from-orange-700 to-rose-700" };
+      return { bg: "from-orange-500/8 via-orange-500/2 to-transparent", border: "border-orange-100", badgeBg: "bg-orange-50 text-orange-800 border-orange-100", gradientText: "from-orange-700 to-rose-700" };
     default:
       return { bg: "from-slate-500/8 via-slate-400/2 to-transparent", border: "border-slate-100", badgeBg: "bg-slate-50 text-slate-700 border-slate-100", gradientText: "from-slate-700 to-slate-800" };
   }

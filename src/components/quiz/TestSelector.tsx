@@ -43,7 +43,7 @@ export const TestSelector: React.FC<TestSelectorProps> = ({ onSelectTest }) => {
         >
           <div className="flex flex-col justify-between w-full h-full p-8 bg-white/92 group-hover:bg-white/80 transition-colors duration-300 text-left">
             <div className="flex flex-col gap-5">
-              <div className="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-650 flex items-center justify-center font-extrabold shadow-inner group-hover:scale-110 transition-transform">
+              <div className="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-extrabold shadow-inner group-hover:scale-110 transition-transform">
                 <Brain className="w-7 h-7" />
               </div>
               <div className="flex flex-col gap-2">
@@ -58,7 +58,7 @@ export const TestSelector: React.FC<TestSelectorProps> = ({ onSelectTest }) => {
 
             <div className="pt-4 border-t border-slate-200/60 flex items-center justify-between text-sm font-bold text-indigo-600">
               <span>Lihat Selengkapnya & Mulai →</span>
-              <span className="text-xs px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-750">80 Pertanyaan</span>
+              <span className="text-xs px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700">80 Pertanyaan</span>
             </div>
           </div>
         </DecayCard>
@@ -73,11 +73,11 @@ export const TestSelector: React.FC<TestSelectorProps> = ({ onSelectTest }) => {
         >
           <div className="flex flex-col justify-between w-full h-full p-8 bg-white/92 group-hover:bg-white/80 transition-colors duration-300 text-left">
             <div className="flex flex-col gap-5">
-              <div className="w-14 h-14 rounded-2xl bg-violet-50 text-violet-650 flex items-center justify-center font-extrabold shadow-inner group-hover:scale-110 transition-transform">
+              <div className="w-14 h-14 rounded-2xl bg-violet-50 text-violet-600 flex items-center justify-center font-extrabold shadow-inner group-hover:scale-110 transition-transform">
                 <Star className="w-7 h-7" />
               </div>
               <div className="flex flex-col gap-2">
-                <h2 className="text-xl sm:text-2xl font-black text-slate-900 group-hover:text-violet-650 transition-colors min-h-[56px] flex items-center">
+                <h2 className="text-xl sm:text-2xl font-black text-slate-900 group-hover:text-violet-600 transition-colors min-h-[56px] flex items-center">
                   Kepribadian & Karir RIASEC
                 </h2>
                 <p className="text-sm text-slate-500 leading-relaxed min-h-[80px]">
@@ -88,7 +88,7 @@ export const TestSelector: React.FC<TestSelectorProps> = ({ onSelectTest }) => {
 
             <div className="pt-4 border-t border-slate-200/60 flex items-center justify-between text-sm font-bold text-violet-600">
               <span>Lihat Selengkapnya & Mulai →</span>
-              <span className="text-xs px-2.5 py-1 rounded-full bg-violet-50 text-violet-750">42 Pertanyaan</span>
+              <span className="text-xs px-2.5 py-1 rounded-full bg-violet-50 text-violet-700">42 Pertanyaan</span>
             </div>
           </div>
         </DecayCard>
@@ -103,11 +103,11 @@ export const TestSelector: React.FC<TestSelectorProps> = ({ onSelectTest }) => {
         >
           <div className="flex flex-col justify-between w-full h-full p-8 bg-white/92 group-hover:bg-white/80 transition-colors duration-300 text-left">
             <div className="flex flex-col gap-5">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-650 flex items-center justify-center font-extrabold shadow-inner group-hover:scale-110 transition-transform">
+              <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-extrabold shadow-inner group-hover:scale-110 transition-transform">
                 <Brain className="w-7 h-7" />
               </div>
               <div className="flex flex-col gap-2">
-                <h2 className="text-xl sm:text-2xl font-black text-slate-900 group-hover:text-emerald-650 transition-colors min-h-[56px] flex items-center">
+                <h2 className="text-xl sm:text-2xl font-black text-slate-900 group-hover:text-emerald-600 transition-colors min-h-[56px] flex items-center">
                   Gaya Belajar (VAK)
                 </h2>
                 <p className="text-sm text-slate-500 leading-relaxed min-h-[80px]">
@@ -118,7 +118,7 @@ export const TestSelector: React.FC<TestSelectorProps> = ({ onSelectTest }) => {
 
             <div className="pt-4 border-t border-slate-200/60 flex items-center justify-between text-sm font-bold text-emerald-600">
               <span>Lihat Selengkapnya & Mulai →</span>
-              <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-750">27 Pertanyaan</span>
+              <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700">27 Pertanyaan</span>
             </div>
           </div>
         </DecayCard>

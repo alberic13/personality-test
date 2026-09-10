@@ -1,7 +1,7 @@
 'use client';
 
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, TargetAndTransition, VariantLabels, Transition, HTMLMotionProps } from 'motion/react';
 
 import './RotatingText.css';
 
@@ -16,17 +16,17 @@ export interface RotatingTextRef {
   reset: () => void;
 }
 
-export interface RotatingTextProps {
+export interface RotatingTextProps extends Omit<HTMLMotionProps<'span'>, 'children' | 'transition' | 'initial' | 'animate' | 'exit'> {
   texts: string[];
   rotationInterval?: number;
-  initial?: object;
-  animate?: object;
-  exit?: object;
+  initial?: TargetAndTransition | VariantLabels | boolean;
+  animate?: TargetAndTransition | VariantLabels | boolean;
+  exit?: TargetAndTransition | VariantLabels;
   animatePresenceMode?: 'wait' | 'popLayout' | 'sync';
   animatePresenceInitial?: boolean;
   staggerDuration?: number;
   staggerFrom?: 'first' | 'last' | 'center' | 'random' | number;
-  transition?: object;
+  transition?: Transition;
   loop?: boolean;
   auto?: boolean;
   splitBy?: 'characters' | 'words' | 'lines' | string;
@@ -34,7 +34,18 @@ export interface RotatingTextProps {
   mainClassName?: string;
   splitLevelClassName?: string;
   elementLevelClassName?: string;
-  [key: string]: any;
+}
+
+interface IntlSegmenterItem {
+  segment: string;
+}
+
+interface IntlSegmenter {
+  segment(input: string): Iterable<IntlSegmenterItem>;
+}
+
+interface IntlWithSegmenter {
+  Segmenter?: new (locale: string, options: { granularity: string }) => IntlSegmenter;
 }
 
 const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>((props, ref) => {
@@ -62,9 +73,10 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>((props, ref)
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
 
   const splitIntoCharacters = (text: string) => {
-    if (typeof Intl !== 'undefined' && (Intl as any).Segmenter) {
-      const segmenter = new (Intl as any).Segmenter('en', { granularity: 'grapheme' });
-      return Array.from(segmenter.segment(text), (segment: any) => segment.segment);
+    const intlWithSeg = (typeof Intl !== 'undefined' ? Intl : undefined) as IntlWithSegmenter | undefined;
+    if (intlWithSeg?.Segmenter) {
+      const segmenter = new intlWithSeg.Segmenter('en', { granularity: 'grapheme' });
+      return Array.from(segmenter.segment(text), (item: IntlSegmenterItem) => item.segment);
     }
     return Array.from(text);
   };
@@ -191,9 +203,9 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>((props, ref)
                 {wordObj.characters.map((char: string, charIndex: number) => (
                   <motion.span
                     key={charIndex}
-                    initial={initial as any}
-                    animate={animate as any}
-                    exit={exit as any}
+                    initial={initial}
+                    animate={animate}
+                    exit={exit}
                     transition={{
                       ...transition,
                       delay: getStaggerDelay(

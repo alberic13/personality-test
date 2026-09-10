@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect, useLayoutEffect, useRef, useState, ReactNode } from 'react';
-import { motion, useMotionValue, useTransform, animate, MotionValue } from 'motion/react';
+import { motion, useMotionValue, useTransform, animate, MotionValue, Easing } from 'motion/react';
+import Image from 'next/image';
 import './OrbitImages.css';
 
 function generateEllipsePath(cx: number, cy: number, rx: number, ry: number) {
@@ -96,7 +97,7 @@ function OrbitItem({ item, index, totalItems, path, itemSize, rotation, progress
         offsetPath: `path("${path}")`,
         offsetRotate: '0deg',
         offsetAnchor: 'center center',
-        offsetDistance: offsetDistance as any,
+        offsetDistance: offsetDistance as unknown as string,
       }}
     >
       <div style={{ transform: `rotate(${-rotation}deg)` }} className="w-full h-full flex items-center justify-center">
@@ -212,7 +213,7 @@ export default function OrbitImages({
     if (paused) return;
     const controls = animate(progress, direction === 'reverse' ? -100 : 100, {
       duration,
-      ease: easing as any,
+      ease: easing as Easing,
       repeat: Infinity,
       repeatType: 'loop',
     });
@@ -223,10 +224,13 @@ export default function OrbitImages({
   const containerHeight = responsive ? 'auto' : (typeof height === 'number' ? height : (typeof width === 'number' ? width : 'auto'));
 
   const items = images.map((src, index) => (
-    <img
+    <Image
       key={src}
       src={src}
       alt={`${altPrefix} ${index + 1}`}
+      width={itemSize}
+      height={itemSize}
+      unoptimized
       draggable={false}
       className="orbit-image"
     />

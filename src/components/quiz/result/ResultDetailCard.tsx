@@ -3,7 +3,7 @@ import { Dimension, IntelligenceType, QuizResult as QuizResultType } from "../..
 import { Card } from "../../ui/Card";
 import { Button } from "../../ui/Button";
 import { Star, GraduationCap, Briefcase, RefreshCw, Printer, Home, ChevronRight } from "lucide-react";
-import { getThemeColors } from "./resultThemes";
+import { getThemeColors, formatTypeName } from "./resultThemes";
 
 interface ResultDetailCardProps {
   selectedDominant: Dimension;
@@ -17,20 +17,6 @@ interface ResultDetailCardProps {
   isGayaBelajar: boolean;
   onRetake: () => void;
   onGoHome: () => void;
-}
-
-function formatTypeName(rawName: string = "") {
-  return rawName
-    .replace("Kecerdasan ", "")
-    .replace(" (Realistik)", "")
-    .replace(" (Investigatif)", "")
-    .replace(" (Artistik)", "")
-    .replace(" (Sosial)", "")
-    .replace(" (Giat / Enterprising)", "")
-    .replace(" (Konvensional)", "")
-    .replace(" (Gaya Belajar Visual)", "")
-    .replace(" (Gaya Belajar Auditori)", "")
-    .replace(" (Gaya Belajar Kinestetik)", "");
 }
 
 export const ResultDetailCard: React.FC<ResultDetailCardProps> = ({

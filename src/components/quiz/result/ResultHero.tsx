@@ -1,7 +1,7 @@
 import React from "react";
 import { Award } from "lucide-react";
 import { Dimension, IntelligenceType, QuizResult as QuizResultType } from "../../../types/quiz";
-import { getThemeColors, ThemeColors } from "./resultThemes";
+import { getThemeColors, ThemeColors, formatTypeName } from "./resultThemes";
 
 interface ResultHeroProps {
   result: QuizResultType;
@@ -13,20 +13,6 @@ interface ResultHeroProps {
   activeTheme: ThemeColors;
   isRiasec: boolean;
   isGayaBelajar: boolean;
-}
-
-function formatTypeName(rawName: string = "") {
-  return rawName
-    .replace("Kecerdasan ", "")
-    .replace(" (Realistik)", "")
-    .replace(" (Investigatif)", "")
-    .replace(" (Artistik)", "")
-    .replace(" (Sosial)", "")
-    .replace(" (Giat / Enterprising)", "")
-    .replace(" (Konvensional)", "")
-    .replace(" (Gaya Belajar Visual)", "")
-    .replace(" (Gaya Belajar Auditori)", "")
-    .replace(" (Gaya Belajar Kinestetik)", "");
 }
 
 export const ResultHero: React.FC<ResultHeroProps> = ({

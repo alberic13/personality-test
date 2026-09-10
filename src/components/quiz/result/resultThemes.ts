@@ -46,6 +46,20 @@ export function getDimensionOrder(testType: string): Dimension[] {
   ];
 }
 
+export function formatTypeName(rawName: string = ""): string {
+  return rawName
+    .replace("Kecerdasan ", "")
+    .replace(" (Realistik)", "")
+    .replace(" (Investigatif)", "")
+    .replace(" (Artistik)", "")
+    .replace(" (Sosial)", "")
+    .replace(" (Giat / Enterprising)", "")
+    .replace(" (Konvensional)", "")
+    .replace(" (Gaya Belajar Visual)", "")
+    .replace(" (Gaya Belajar Auditori)", "")
+    .replace(" (Gaya Belajar Kinestetik)", "");
+}
+
 export function getThemeColors(type: Dimension): ThemeColors {
   switch (type) {
     case "linguistik":

@@ -111,20 +111,11 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>((props, ref)
 
   const getStaggerDelay = useCallback(
     (index: number, totalChars: number) => {
-      const total = totalChars;
       if (staggerFrom === 'first') return index * staggerDuration;
-      if (staggerFrom === 'last') return (total - 1 - index) * staggerDuration;
-      if (staggerFrom === 'center') {
-        const center = Math.floor(total / 2);
-        return Math.abs(center - index) * staggerDuration;
-      }
-      if (staggerFrom === 'random') {
-        const randomIndex = Math.floor(Math.random() * total);
-        return Math.abs(randomIndex - index) * staggerDuration;
-      }
-      if (typeof staggerFrom === 'number') {
-        return Math.abs(staggerFrom - index) * staggerDuration;
-      }
+      if (staggerFrom === 'last') return (totalChars - 1 - index) * staggerDuration;
+      if (staggerFrom === 'center') return Math.abs(Math.floor(totalChars / 2) - index) * staggerDuration;
+      if (staggerFrom === 'random') return Math.abs(Math.floor(Math.random() * totalChars) - index) * staggerDuration;
+      if (typeof staggerFrom === 'number') return Math.abs(staggerFrom - index) * staggerDuration;
       return index * staggerDuration;
     },
     [staggerFrom, staggerDuration]
@@ -140,32 +131,24 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>((props, ref)
 
   const next = useCallback(() => {
     const nextIndex = currentTextIndex === texts.length - 1 ? (loop ? 0 : currentTextIndex) : currentTextIndex + 1;
-    if (nextIndex !== currentTextIndex) {
-      handleIndexChange(nextIndex);
-    }
+    if (nextIndex !== currentTextIndex) handleIndexChange(nextIndex);
   }, [currentTextIndex, texts.length, loop, handleIndexChange]);
 
   const previous = useCallback(() => {
     const prevIndex = currentTextIndex === 0 ? (loop ? texts.length - 1 : currentTextIndex) : currentTextIndex - 1;
-    if (prevIndex !== currentTextIndex) {
-      handleIndexChange(prevIndex);
-    }
+    if (prevIndex !== currentTextIndex) handleIndexChange(prevIndex);
   }, [currentTextIndex, texts.length, loop, handleIndexChange]);
 
   const jumpTo = useCallback(
     (index: number) => {
       const validIndex = Math.max(0, Math.min(index, texts.length - 1));
-      if (validIndex !== currentTextIndex) {
-        handleIndexChange(validIndex);
-      }
+      if (validIndex !== currentTextIndex) handleIndexChange(validIndex);
     },
     [texts.length, currentTextIndex, handleIndexChange]
   );
 
   const reset = useCallback(() => {
-    if (currentTextIndex !== 0) {
-      handleIndexChange(0);
-    }
+    if (currentTextIndex !== 0) handleIndexChange(0);
   }, [currentTextIndex, handleIndexChange]);
 
   useImperativeHandle(

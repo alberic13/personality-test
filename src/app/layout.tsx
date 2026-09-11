@@ -4,6 +4,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Test Personal | Zalde",
   description: "Temukan minat & bakat terpendam Anda dengan kuis kecerdasan majemuk interaktif.",
+  authors: [
+    { name: "Muchammad Zalde Zahwa Putra", url: "https://github.com/alberic13" },
+  ],
 };
 
 export default function RootLayout({

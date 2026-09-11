@@ -154,7 +154,15 @@ export const QuizResult: React.FC<QuizResultProps> = ({
       </div>
 
       <div className="hidden print:block text-center mt-12 pt-4 border-t border-slate-200 text-xs text-slate-400">
-        © 2026 Test Personal | Zalde.
+        © 2026 Test Personal | Developed by{" "}
+        <a
+          href="https://github.com/alberic13"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-slate-600 underline"
+        >
+          Muchammad Zalde Zahwa Putra
+        </a>
       </div>
     </div>
   );

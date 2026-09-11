@@ -92,7 +92,17 @@ export default function Home() {
 
       <footer className="w-full py-6 text-center border-t border-slate-200 text-xs sm:text-sm text-slate-400 mt-6 bg-white/30 backdrop-blur-sm transition-colors duration-300">
         <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© {new Date().getFullYear()} Test Personal | Zalde.</p>
+          <p>
+            © {new Date().getFullYear()} Test Personal | Developed by{" "}
+            <a
+              href="https://github.com/alberic13"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-slate-600 transition-colors underline font-medium"
+            >
+              Muchammad Zalde Zahwa Putra
+            </a>
+          </p>
           <div className="flex items-center gap-4">
             <a
               href="https://api.whatsapp.com/send?phone=6281381998561"
